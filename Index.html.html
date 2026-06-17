@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMI Anestesiguider – Karolinska Solna</title>
+<style>
+  :root {
+    --navy: #1A3F6F;
+    --navy-light: #2563A8;
+    --navy-pale: #EBF1F9;
+    --green: #2E7D5E;
+    --green-pale: #E8F5EF;
+    --red: #C62828;
+    --red-pale: #FDECEA;
+    --orange: #E65100;
+    --orange-pale: #FFF3E0;
+    --amber: #F59E0B;
+    --surface: #F4F6FA;
+    --card: #FFFFFF;
+    --border: #E2E8F0;
+    --text: #1A202C;
+    --text-2: #4A5568;
+    --text-3: #718096;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Import Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  /* ─── Layout Shell ─── */
+  .app-shell {
+    display: grid;
+    grid-template-rows: 56px 1fr;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ─── Top bar ─── */
+  .topbar {
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    position: relative;
+    z-index: 100;
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    text-decoration: none;
+  }
+  .topbar-brand svg { opacity: .9; }
+  .topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -.2px; }
+  .topbar-sub { font-size: 11px; opacity: .55; font-weight: 400; }
+  .topbar-spacer { flex: 1; }
+  .topbar-search {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 6px 12px;
+    gap: 8px;
+    width: 240px;
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .topbar-search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 13px;
+    width: 100%;
+    font-family: var(--font-body);
+  }
+  .topbar-search input::placeholder { color: rgba(255,255,255,.45); }
+  .topbar-search svg { opacity: .5; flex-shrink: 0; }
+
+  /* ─── Main layout ─── */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    overflow: hidden;
+  }
+
+  /* ─── Sidebar ─── */
+  .sidebar {
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-section { padding: 12px 12px 4px; }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--text-3);
+    padding: 0 4px;
+    margin-bottom: 4px;
+  }
+  .sidebar-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 12px 12px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-tab {
+    flex: 1;
+    padding: 7px 8px;
+    border: none;
+    background: none;
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+  }
+  .sidebar-tab.active {
+    background: var(--navy-pale);
+    color: var(--navy);
+  }
+  .sidebar-tab:hover:not(.active) { background: var(--surface); }
+
+  .cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px;
+    border: none;
+    background: none;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    color: var(--text-2);
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-body);
+    transition: all .15s;
+  }
+  .cat-btn:hover { background: var(--surface); }
+  .cat-btn.active { background: var(--navy-pale); color: var(--navy); font-weight: 600; }
+  .cat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cat-count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1px 6px;
+    color: var(--text-3);
+  }
+
+  .guide-list { padding: 8px; flex: 1; }
+  .guide-item {
+    padding: 10px 10px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+  }
+  .guide-item:hover { background: var(--surface); }
+  .guide-item.active {
+    background: var(--navy-pale);
+    border-color: var(--navy);
+  }
+  .guide-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .guide-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: .2px;
+  }
+  .risk-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .guide-progress { margin-top: 6px; }
+  .progress-bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width .3s ease;
+  }
+
+  /* ─── Detail Panel ─── */
+  .detail-panel {
+    overflow-y: auto;
+    background: var(--surface);
+  }
+  .detail-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: var(--text-3);
+  }
+  .detail-empty svg { opacity: .3; }
+  .detail-empty p { font-size: 14px; }
+
+  /* Detail Hero */
+  .detail-hero {
+    padding: 28px 28px 20px;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+  }
+  .detail-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,.15) 0%, transparent 60%);
+  }
+  .detail-hero-content { position: relative; z-index: 1; }
+  .detail-hero-cat {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    opacity: .7;
+    margin-bottom: 6px;
+  }
+  .detail-hero-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.3px;
+    margin-bottom: 4px;
+  }
+  .detail-hero-time {
+    font-size: 13px;
+    opacity: .75;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Snabb-chips */
+  .detail-chips {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-chip {
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .detail-chip:last-child { border-right: none; }
+  .detail-chip-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .detail-chip-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Detail content */
+  .detail-content { padding: 16px 20px 40px; max-width: 900px; }
+  .detail-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--card);
+    border-radius: var(--r-md);
+    padding: 4px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .detail-tab {
+    flex: 1;
+    padding: 7px 4px;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+  }
+  .detail-tab.active {
+    background: var(--navy);
+    color: #fff;
+  }
+  .detail-tab:hover:not(.active) { background: var(--surface); color: var(--text); }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--navy);
+    background: var(--navy-pale);
+  }
+  .card-body { padding: 14px; }
+
+  /* Risker */
+  .risks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .risk-col-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .risk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 13px;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .risk-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* Infarter */
+  .infart-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .infart-row:last-child { border-bottom: none; }
+  .infart-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .infart-content { flex: 1; }
+  .infart-name { font-size: 13px; font-weight: 600; }
+  .infart-detail { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .obligatorisk-mark {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--red);
+    padding: 1px 6px;
+    background: var(--red-pale);
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+
+  /* Läkemedel */
+  .lm-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .lm-row:last-child { border-bottom: none; }
+  .lm-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .lm-name { font-size: 13px; font-weight: 600; }
+  .lm-dos { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+  .lm-kommentar { font-size: 11px; color: var(--text-3); font-style: italic; margin-top: 2px; }
+  .timing-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Monitorering / utrustning tags */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    background: var(--navy-pale);
+    color: var(--navy);
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .tag-green { background: var(--green-pale); color: var(--green); }
+  .tag-orange { background: var(--orange-pale); color: var(--orange); }
+
+  /* Caveat */
+  .caveat-box {
+    background: var(--orange-pale);
+    border: 1px solid rgba(230,81,0,.2);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .caveat-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    color: var(--orange);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .caveat-item {
+    font-size: 13px;
+    margin-bottom: 5px;
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  /* Postop */
+  .postop-item {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+  }
+  .postop-item:last-child { border-bottom: none; }
+  .postop-bullet {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Checklista ─── */
+  .checklist-phases {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .phase-btn {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: var(--r-md);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 90px;
+  }
+  .phase-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
+  }
+  .phase-btn.done {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-pale);
+  }
+  .phase-count { font-size: 10px; opacity: .7; font-weight: 400; }
+
+  .checklist-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .checklist-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .checklist-progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width .3s ease;
+  }
+  .checklist-progress-text { font-size: 12px; font-weight: 600; color: var(--green); min-width: 36px; }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--card);
+    border-radius: var(--r-md);
+    margin-bottom: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all .15s;
+  }
+  .check-item:hover { border-color: var(--navy); }
+  .check-item.kritisk { border-left: 3px solid var(--red); }
+  .check-item.done { background: var(--green-pale); border-color: var(--green); opacity: .75; }
+  .check-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    margin-top: 1px;
+  }
+  .check-item.kritisk:not(.done) .check-circle { border-color: var(--red); }
+  .check-item.done .check-circle {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .check-circle svg { display: none; }
+  .check-item.done .check-circle svg { display: block; }
+  .check-text { font-size: 13px; line-height: 1.4; }
+  .check-item.done .check-text { text-decoration: line-through; color: var(--text-3); }
+  .check-comment { font-size: 11px; color: var(--text-3); font-style: italic; margin-top: 3px; }
+  .check-kritisk-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    color: var(--red);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+  }
+  .reset-btn:hover { background: var(--red-pale); border-color: var(--red); }
+
+  /* ─── Läkemedelsreferens tab ─── */
+  .drug-filter {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .drug-filter-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+    color: var(--text-2);
+  }
+  .drug-filter-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
+  }
+  .drug-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .drug-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .drug-card-header:hover { background: var(--surface); }
+  .etikett-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .drug-card-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .drug-card-styrka { font-size: 11px; color: var(--text-3); }
+  .drug-card-body {
+    padding: 10px 12px 12px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .drug-card.expanded .drug-card-body { display: block; }
+  .drug-detail-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 4px 10px;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .drug-detail-row:last-child { border-bottom: none; }
+  .drug-detail-key { font-weight: 700; color: var(--text-3); font-size: 10px; letter-spacing: .6px; padding-top: 3px; }
+  .drug-detail-cave { color: var(--red); font-weight: 600; }
+
+  /* Blödnings-målvärden */
+  .blodning-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .blodning-table th {
+    background: var(--navy);
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+  }
+  .blodning-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .blodning-table tr:last-child td { border-bottom: none; }
+  .blodning-table tr:nth-child(even) td { background: var(--surface); }
+  .malvarde-badge {
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--navy-pale);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  /* Källdokument */
+  .kalla-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .kalla-row:last-child { border-bottom: none; }
+  .kalla-pmi { font-weight: 700; color: var(--navy); min-width: 100px; }
+
+  /* ─── Mobile responsive ─── */
+  @media (max-width: 768px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .sidebar.mobile-open { display: flex; position: fixed; inset: 56px 0 0 0; z-index: 50; width: 100%; }
+    .topbar-search { width: 160px; }
+    .risks-grid { grid-template-columns: 1fr; }
+    .detail-hero-title { font-size: 18px; }
+    .detail-content { padding: 12px 14px 40px; }
+    .detail-chips { grid-template-columns: repeat(3, 1fr); }
+    .detail-tabs { gap: 1px; }
+    .detail-tab { font-size: 11px; padding: 6px 2px; }
+    .topbar-search { display: none; }
+    .mobile-search-btn { display: flex !important; }
+  }
+  .mobile-search-btn { display: none; }
+  .hamburger { display: none; }
+  @media (max-width: 768px) {
+    .hamburger { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,.12); border: none; border-radius: 8px; cursor: pointer; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Meny">
+      <svg width="18" height="18" fill="none" stroke="white" stroke-width="2"><line x1="3" y1="5" x2="15" y2="5"/><line x1="3" y1="9" x2="15" y2="9"/><line x1="3" y1="13" x2="15" y2="13"/></svg>
+    </button>
+    <div class="topbar-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+      <div>
+        <div class="topbar-title">PMI Anestesiguider</div>
+        <div class="topbar-sub">Karolinska Solna</div>
+      </div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Sök ingrepp, nyckelord..." oninput="onSearch(this.value)">
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" onclick="setSidebarTab('guider', this)">Guider</button>
+        <button class="sidebar-tab" onclick="setSidebarTab('lakemedel', this)">Läkemedel</button>
+        <button class="sidebar-tab" onclick="setSidebarTab('om', this)">Om</button>
+      </div>
+
+      <!-- Guider tab -->
+      <div id="tab-guider">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Kategori</div>
+          <button class="cat-btn active" onclick="setKategori(null, this)">
+            <div class="cat-dot" style="background:#64748B"></div>
+            Alla ingrepp
+            <span class="cat-count" id="count-all">15</span>
+          </button>
+        </div>
+        <div id="cat-list" class="sidebar-section" style="padding-top:0"></div>
+        <div class="guide-list" id="guide-list"></div>
+      </div>
+
+      <!-- Läkemedel tab -->
+      <div id="tab-lakemedel" style="display:none; padding:10px">
+        <div class="sidebar-label" style="padding:4px">Filter</div>
+        <div id="lm-filter-list"></div>
+      </div>
+
+      <!-- Om tab -->
+      <div id="tab-om" style="display:none; padding:12px">
+        <div style="font-size:12px; color:var(--text-3); line-height:1.6">
+          <strong style="color:var(--text)">PMI Anestesiguider</strong><br>
+          Intern klinisk referensapp<br><br>
+          Karolinska Universitetssjukhuset<br>
+          ME Perioperativ Medicin, Solna<br><br>
+          <strong style="color:var(--text)">Version:</strong> 1.0 (2026-01-07)<br><br>
+          <div style="background:var(--orange-pale);border-radius:8px;padding:10px;margin-top:8px;font-size:11px;border:1px solid rgba(230,81,0,.2)">
+            ⚠️ Intern app. Kontrollera alltid mot aktuell version i PMI-dokumentationssystemet.
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Detail panel -->
+    <main class="detail-panel" id="detail-panel">
+      <!-- Läkemedel panel -->
+      <div id="lm-panel" style="display:none; padding:16px 20px 40px; max-width:900px">
+        <div id="lm-content"></div>
+      </div>
+
+      <!-- Om panel -->
+      <div id="om-panel" style="display:none; padding:16px 20px 40px; max-width:700px">
+        <div id="om-content"></div>
+      </div>
+
+      <!-- Guide-detalj panel -->
+      <div id="guide-detail" style="display:none">
+        <div class="detail-hero" id="detail-hero"></div>
+        <div class="detail-chips" id="detail-chips"></div>
+        <div class="detail-content">
+          <div class="detail-tabs">
+            <button class="detail-tab active" onclick="setDetailTab('oversikt', this)">Översikt</button>
+            <button class="detail-tab" onclick="setDetailTab('lakemedel', this)">Läkemedel</button>
+            <button class="detail-tab" onclick="setDetailTab('checklista', this)">Checklista</button>
+            <button class="detail-tab" onclick="setDetailTab('postop', this)">Postop</button>
+          </div>
+          <div id="tab-oversikt"></div>
+          <div id="tab-lakemedel-detail" style="display:none"></div>
+          <div id="tab-checklista" style="display:none"></div>
+          <div id="tab-postop" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="detail-empty" id="detail-empty">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+        </svg>
+        <p>Välj ett ingrepp för att se fickguiden</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════
+
+const KATEGORIER = {
+  urologi:     { namn: 'Urologi',      farg: '#1565C0', ikon: '💧' },
+  gynekologi:  { namn: 'Gynekologi',   farg: '#8B2FC9', ikon: '⭐' },
+  kolorektal:  { namn: 'Kolorektal',   farg: '#2E7D5E', ikon: '🔄' },
+  endokrin:    { namn: 'Endokrin/BES', farg: '#E65100', ikon: '⬡' },
+  karloperation:{ namn: 'Kärl',        farg: '#C62828', ikon: '❤️' },
+  obstetrik:   { namn: 'Obstetrik',    farg: '#AD1457', ikon: '👥' },
+  brachy:      { namn: 'Brachy',       farg: '#4527A0', ikon: '✦' },
+  trauma:      { namn: 'Trauma/Akut',  farg: '#B71C1C', ikon: '⚡' },
+};
+
+const RISK = {
+  lag:        { text: 'Låg',         farg: '#2E7D5E', bg: '#E8F5EF' },
+  medel:      { text: 'Måttlig',     farg: '#E65100', bg: '#FFF3E0' },
+  hog:        { text: 'Hög',         farg: '#C62828', bg: '#FDECEA' },
+  mycket_hog: { text: 'Mycket hög',  farg: '#7B1515', bg: '#FDECEA' },
+};
+
+const TIMING_COLORS = {
+  induktion:  { bg: '#1565C0', txt: '#fff' },
+  kontinuerlig:{ bg: '#E65100', txt: '#fff' },
+  underhåll:  { bg: '#E65100', txt: '#fff' },
+  väckning:   { bg: '#2E7D5E', txt: '#fff' },
+  postop:     { bg: '#6A1B9A', txt: '#fff' },
+  default:    { bg: '#64748B', txt: '#fff' },
+};
+
+function timingColor(t) {
+  const s = t.toLowerCase();
+  if (s.includes('induktion')) return TIMING_COLORS.induktion;
+  if (s.includes('väckning')) return TIMING_COLORS.väckning;
+  if (s.includes('kontinuerlig') || s.includes('underhåll')) return TIMING_COLORS.underhåll;
+  if (s.includes('postop')) return TIMING_COLORS.postop;
+  return TIMING_COLORS.default;
+}
+
+const GUIDER = [
+{
+  id:'ralp', namn:'Robot Assisterad Prostatektomi (RALP)', kategori:'urologi',
+  beskrivning:'Robotassisterad laparoskopisk prostatektomi för behandling av prostatacancer. Utförs intraperitonealt via bukhålan (Standard P) eller retroperitonealt via single-port (SP-P). Kräver kraftig Trendelenburgposition vilket ger hemodynamiska och respiratoriska utmaningar.',
+  operationstid:'2–4 timmar', risk:'medel',
+  anestesiteknik:['Generell anestesi','TIVA','TCI'],
+  anestesiteknikDetalj:'GA med endotrakeal intubation. TIVA med TCI Propofol (Eleveld) + Remifentanil TCI. SP-P: planläge, risk för mediastinalt emfysem.',
+  positionering:'Ryggläge. Båda armar inbäddade. 27° Trendelenburg. SP-P: planläge.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Säkra tuban extra noga. Kontrollera sidoventilation efter positionsändring.',
+  kirurgiskaRisker:['Blödning','Rektalskada','Uretärskada','Anastomosläckage','Mediastinalt emfysem (SP-P)'],
+  anestesiologiskaRisker:['Hemodynamisk påverkan av kraftig Trendelenburg','Atelektasbildning/ökat luftvägstryck','CO₂-absorption från pneumoperitoneum','Pneumothorax (SP-P)','PONV'],
+  monitorering:['EKG (5-avl)','SpO₂','NIBP','Artärnål (HemoSphere)','TOF-mätning','Temperatur','Timdiures (KAD)'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov (grön/rosa)',placering:'Kubitalveck',obligatorisk:true},
+    {typ:'PVK',storlek:'Standard',placering:'Underarm',obligatorisk:true},
+    {typ:'Artärnål',placering:'Radialisartär höger arm',obligatorisk:false,kommentar:'HemoSphere'},
+    {typ:'CVK',placering:'Jugularis/subclavia',obligatorisk:false,kommentar:'Ibland vid LKU'},
+  ],
+  lakemedel:[
+    {namn:'Propofol TCI (Eleveld)',dos:'Cet 2–4 µg/ml',timing:'Induktion + underhåll',kommentar:'Faktisk vikt'},
+    {namn:'Remifentanil TCI (Eleveld)',dos:'Cet 5–8 ng/ml induktion',timing:'Kontinuerlig infusion'},
+    {namn:'Rokuronium (Esmeron)',dos:'0,6–1 mg/kg iv',timing:'Induktion',kommentar:'Underhåll 0,15 mg/kg'},
+    {namn:'Betapred',dos:'8 mg iv',timing:'Induktion'},
+    {namn:'Ketamin/Esketamin',dos:'Ketamin 0,5–1 mg/kg ELLER Esketamin 0,25–0,5 mg/kg',timing:'Bolus innan opstart',kommentar:'NMDA-antagonist'},
+    {namn:'Morfin',dos:'0,2 mg/kg iv (max 20 mg)',timing:'Inför väckning'},
+    {namn:'Klonidin (Catapresan)',dos:'75 µg iv',timing:'Inför väckning'},
+    {namn:'Butylskopolamin (Buscopan)',dos:'20 mg iv (långsamt!)',timing:'Inför väckning',kommentar:'Risk takykardi'},
+    {namn:'Paracetamol',dos:'1 g iv',timing:'Inför väckning'},
+  ],
+  specialutrustning:['DaVinci-robotsystem','Pinkpad (tryckavlastning Trendelenburg)','Dropp med förlängare (armar inbäddade)','Bröstband','Blodvärmare','HemoSphere (artärnål)'],
+  checklistor:[
+    {text:'Trombyl utsatt preoperativt',fas:'preop',kritisk:true},
+    {text:'Premedicinering given ≥1–3 h: Alvedon 1g + Targiniq 10mg + Celebra 200mg',fas:'preop',kritisk:true},
+    {text:'PVK satt, infusion kopplad',fas:'preop'},
+    {text:'TCI-pumpar programmerade med faktisk vikt, längd, ålder',fas:'induktion',kritisk:true},
+    {text:'Betapred 8 mg iv givet',fas:'induktion'},
+    {text:'Ketamin/Esketamin bolus givet innan opstart',fas:'induktion',kritisk:true},
+    {text:'Positionering verifierad – Trendelenburg + Pinkpad',fas:'intraop',kritisk:true},
+    {text:'Tubläge kontrollerat efter positionsändring',fas:'intraop'},
+    {text:'TOF-mätning pågår',fas:'intraop'},
+    {text:'TOF ≥0,9 bekräftat eller Sugammadex givet',fas:'avslut',kritisk:true},
+    {text:'Morfin 0,2 mg/kg iv givet',fas:'avslut'},
+    {text:'Catapresan 75 µg iv',fas:'avslut'},
+    {text:'Buscopan 20 mg iv (långsamt)',fas:'avslut'},
+    {text:'PONV-profylax given',fas:'avslut'},
+    {text:'Smärtlindring ordinerat postop',fas:'postop'},
+    {text:'KAD kvar, fungerande diures dokumenterat',fas:'postop'},
+  ],
+  postopOrdinationer:['T Alvedon 1 g × 4 po','T Targiniq 5 mg × 2 po','T Oxynorm 5 mg po vb','Inj Dynastat 20–40 mg iv vb','KAD kvar per urolog'],
+  caveat:['CAVE: Trombyl MÅSTE sättas ut preoperativt','SP-P: Risk för mediastinalt emfysem – kontrollera postop','Buscopan ges LÅNGSAMT pga risk för takykardi','TCI: Använd faktisk vikt, EJ idealvikt'],
+  kallaDokument:['PMI00704-4','PMI01868-4','PMI00418-7'],
+  nyckelord:['prostatektomi','robot','RALP','prostata','urologi'],
+},
+{
+  id:'ralh', namn:'Robot Assisterad Laparoskopisk Hysterektomi (RALH)', kategori:'gynekologi',
+  beskrivning:'Robotassisterad laparoskopisk hysterektomi, oftast vid corpuscancer. Kan inkludera bilateral SOE, sentinel node-biopsi och lymfkörtelutrymning (pelvin/paraaortal). Paraaortal körtelutrymning innebär större operation med mer postoperativ smärta.',
+  operationstid:'2–4 timmar', risk:'medel',
+  anestesiteknik:['Generell anestesi','TIVA'],
+  anestesiteknikDetalj:'GA med endotrakeal intubation. TIVA TCI Propofol + Remifentanil. HÖGT PONV-risk – aggressiv profylax.',
+  positionering:'Ryggläge. Rumpa 5–8 cm utanför bordskant. Vänster arm inbäddad. Höger arm ut (TIVA kopplas här). 30° Trendelenburg.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Kontrollera tubläge efter Trendelenburgposition.',
+  kirurgiskaRisker:['Blödning (ökad vid paraaortala körtlar)','Uretärskada','Blåsskada','Tarmskada','Lymfödem post LKU'],
+  anestesiologiskaRisker:['Hemodynamisk påverkan Trendelenburg','Hög PONV-risk','Hypotension vid TIVA','Atelektaser'],
+  monitorering:['EKG','SpO₂','NIBP','TOF-mätning','Temperatur','Timdiures (KAD)'],
+  infarter:[
+    {typ:'PVK',storlek:'Standard',placering:'Höger arm (fri)',antal:2,obligatorisk:true,kommentar:'TIVA + vasopressor kopplas här'},
+    {typ:'PVK',storlek:'Extra',obligatorisk:false,kommentar:'3:e PVK vid paraaortala körtlar'},
+  ],
+  lakemedel:[
+    {namn:'Propofol TCI (Eleveld)',dos:'Cet 2–4 µg/ml',timing:'Induktion + underhåll'},
+    {namn:'Remifentanil TCI (Eleveld)',dos:'Cet 5–8 ng/ml',timing:'Kontinuerlig infusion'},
+    {namn:'Rokuronium',dos:'0,6–1 mg/kg iv',timing:'Induktion'},
+    {namn:'Betapred',dos:'8 mg iv',timing:'Induktion'},
+    {namn:'Ketamin/Esketamin',dos:'Ketamin 0,5–1 mg/kg ELLER Esketamin 0,25–0,5 mg/kg',timing:'Bolus innan opstart'},
+    {namn:'Morfin',dos:'0,15–0,2 mg/kg iv (max 20 mg)',timing:'Inför väckning'},
+    {namn:'Paracetamol',dos:'1 g iv',timing:'Inför väckning'},
+    {namn:'PONV-profylax (obligat!)',dos:'Ondansetron 4–8 mg',timing:'Inför väckning',kommentar:'HÖG PONV-risk'},
+  ],
+  specialutrustning:['DaVinci-robot','Pinkpad','Dropp med förlängare','V-sond','Överkroppstäcke'],
+  checklistor:[
+    {text:'Premedicinering given ≥1–3 h: Alvedon 1g + Celebra 200mg + Targiniq 10mg',fas:'preop',kritisk:true},
+    {text:'2 PVK på höger arm (fri arm) – 3 PVK vid paraaortala körtlar',fas:'preop',kritisk:true},
+    {text:'Noradrenalininfusion förberedd på höger arm',fas:'preop'},
+    {text:'TCI-pumpar programmerade med faktisk vikt',fas:'induktion',kritisk:true},
+    {text:'Betapred 8 mg iv givet',fas:'induktion'},
+    {text:'Ketamin/Esketamin bolus innan opstart',fas:'induktion',kritisk:true},
+    {text:'Positionering: 30° Trendelenburg, armar kontrollerade',fas:'intraop',kritisk:true},
+    {text:'TOF-reversering bekräftad (≥0,9) eller Sugammadex',fas:'avslut',kritisk:true},
+    {text:'PONV-profylax given (hög risk!)',fas:'avslut',kritisk:true},
+    {text:'Smärtlindring postop ordinerat av gynekolog',fas:'postop'},
+  ],
+  postopOrdinationer:['T Alvedon 1 g × 4 po','T Celebra 200 mg × 2 po','T Oxynorm 5 mg po vb','PONV: Ondansetron/Primperan/Dridol'],
+  caveat:['RALH = HÖG PONV-risk – aggressiv profylax krävs','TIVA kopplas ALLTID på den fria (höger) armen','TCI: Faktisk vikt, EJ idealvikt'],
+  kallaDokument:['PMI01450-3','PMI01868-4','PMI00418-7'],
+  nyckelord:['hysterektomi','robot','RALH','gynekologi','corpuscancer'],
+},
+{
+  id:'feo', namn:'Feokromocytom / Paragangliom', kategori:'endokrin',
+  beskrivning:'Adrenalektomi vid katekolaminproducerande binjuretumör. Producerar noradrenalin/adrenalin och innebär extrema hemodynamiska utmaningar perioperativt – hypertensiv kris vid tumörmanipulation, svår hypotension efter ligering av tumörens venösa avflöde.',
+  operationstid:'2–4 timmar', risk:'mycket_hog',
+  anestesiteknik:['Generell anestesi'],
+  anestesiteknikDetalj:'GA med endotrakeal intubation. Sevofluran + Remifentanil (EJ TCI vid feo). EDA Th 7–10 vid öppen kirurgi. CAVE histaminfrisättande LM. CAVE Efedrin (absolut kontraindikerat).',
+  positionering:'Sidoläge/snedläge/bukläge med knickat opbord.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Undvik stress vid intubation. Adekvat djup anestesi. Katekolaminutsvämning vid laryngoskopi.',
+  kirurgiskaRisker:['Massiv katekolaminutsvämning vid tumörmanipulation','Blödning','Kvarvarande tumörvävnad','Konvertering till öppen op'],
+  anestesiologiskaRisker:['Hypertensiv kris (>300 mmHg möjligt!)','Takykardi/takyarytmi (adrenalin-tumör)','Svår hypotension post-resektion','Katekolamininducerad kardiomyopati','Arytmier','Hypoglykemi postop'],
+  monitorering:['EKG (5-avl) – FÖRE induktion','Invasivt artärtryck FÖRE induktion','CVK 2–3 lumen (Adenosin i eget lumen)','Slavskärm BT-kurva för kirurgerna','Timdiures','B-glukos postop'],
+  infarter:[
+    {typ:'Artärnål',placering:'Radialisartär',obligatorisk:true,kommentar:'Sätts FÖRE induktion'},
+    {typ:'PVK',storlek:'Grov',obligatorisk:true,kommentar:'Med kranar + bärardropp'},
+    {typ:'PVK',storlek:'Extra (volym)',obligatorisk:true},
+    {typ:'CVK',placering:'Läggs EFTER induktion',obligatorisk:true,kommentar:'Adenosin i separat lumen!'},
+  ],
+  lakemedel:[
+    {namn:'Adenosin (HÖRNSTEN)',dos:'50–500 µg/kg/min iv infusion',timing:'Kontinuerlig infusion',kommentar:'EJ blanda med andra LM. Separat CVK-lumen. t½ = 10 sek'},
+    {namn:'Noradrenalin 40 µg/ml',dos:'0,01–0,9 µg/kg/min',timing:'Startad VID INDUKTION',kommentar:'Förväntat blodtrycksfall'},
+    {namn:'Magnesium',dos:'5–10 mmol bolus, sedan 5–10 mmol/h',timing:'Tillägg till Adenosin',kommentar:'Vid arytmier'},
+    {namn:'Propofol',dos:'1,5–2,5 mg/kg iv',timing:'Induktion'},
+    {namn:'Remifentanil',dos:'0,1–0,3 µg/kg/min, titrera upp',timing:'Kontinuerlig infusion',kommentar:'EJ TCI vid feo'},
+    {namn:'Sevofluran',dos:'Individuellt',timing:'Underhåll'},
+    {namn:'Rokuronium',dos:'0,6–1 mg/kg iv',timing:'Induktion'},
+    {namn:'Landiolol (Rapibloc)',dos:'10–80 µg/kg/min ELLER 5 mg bolus/1 min',timing:'Vid takykardi/arytmi',kommentar:'t½ 4 min'},
+    {namn:'Nitroprussid (Nipride)',dos:'0,5–3 µg/kg/min',timing:'Tillägg vid hypertoni'},
+    {namn:'Nitroglycerin',dos:'Från 0,1 mg bolus',timing:'Alternativ vid hypertoni'},
+  ],
+  specialutrustning:['10 st infusionspumpar + 1 volymspump (OBLIGAT)','Slavskärm med invasiv BT-kurva för kirurgerna','Vakuummadrass + armstöd','EDA-set Th 7–10 (öppen op)','Bärardropp Glukos 2,5% buffrad'],
+  checklistor:[
+    {text:'MDK genomförd: endokrinolog + kirurg + anestesiolog',fas:'preop',kritisk:true},
+    {text:'Ekokardiografi utförd (obligat riskgrupp 3–4)',fas:'preop'},
+    {text:'24-h BT-mätning: mål <140/90 mmHg',fas:'preop',kritisk:true},
+    {text:'Preoperativ alfablockad optimerad (Doxazosin)',fas:'preop',kritisk:true},
+    {text:'Nattplats postop/CIVA bekräftad INNAN sövning',fas:'preop',kritisk:true},
+    {text:'Artärnål satt FÖRE induktion',fas:'induktion',kritisk:true},
+    {text:'Adenosin (2 pumpar) + Noradrenalin uppdragna och kopplade',fas:'induktion',kritisk:true},
+    {text:'CAVE EFEDRIN – ABSOLUT KONTRAINDICERAT',fas:'induktion',kritisk:true},
+    {text:'CVK lagd, Adenosin i separat lumen',fas:'induktion',kritisk:true},
+    {text:'Slavskärm BT-kurva synlig för kirurgerna',fas:'intraop',kritisk:true},
+    {text:'Kommunicera med kirurgerna INNAN tumörmanipulation',fas:'intraop',kritisk:true},
+    {text:'Vid ligering tumörven: Noradrenalin redo för ökad dos',fas:'intraop',kritisk:true},
+    {text:'B-glukos monitoreras – hypoglykemirisk postop',fas:'postop',kritisk:true},
+  ],
+  postopOrdinationer:['CIVA-vård obligat (minst 1 natt)','Noradrenalin trappas ut försiktigt','B-glukos kontroller (hypoglykemirisk)','Alfadil (Doxazosin) kan sättas ut postop','Uppföljning endokrinolog (katekolaminer ≥10 år)'],
+  caveat:['⚠️ CAVE: Efedrin ABSOLUT KONTRAINDICERAT','⚠️ Adenosin i eget CVK-lumen – EJ blandas','⚠️ Artärnål MÅSTE sättas INNAN induktion','⚠️ Nattplats/CIVA bekräftad INNAN sövning','Utsvämning sker vid: intubation, CO₂-insufflation, tumörmanipulation'],
+  kallaDokument:['PMI00806-4','Kar2-14745','PMI00418-7'],
+  nyckelord:['feokromocytom','paragangliom','binjure','adrenalektomi','katekolaminer','hypertensiv kris'],
+},
+{
+  id:'cystektomi', namn:'Cystektomi (Robotassisterad/Öppen)', kategori:'urologi',
+  beskrivning:'Radikal cystektomi vid blåscancer eller strålskadad blåsa. Inkluderar borttagning av urinblåsa med omgivande strukturer samt urinavledning (neobladder eller konduit). Morfin-spinal 0,2 mg preoperativt ger god postoperativ smärtlindring.',
+  operationstid:'4–8 timmar', risk:'hog',
+  anestesiteknik:['Generell anestesi','Spinalanestesi'],
+  anestesiteknikDetalj:'GA + morfin-spinal 0,2 mg intratekalt. Vid öppen kirurgi: EDA. 27° Trendelenberg.',
+  positionering:'Ryggläge. Båda armar inbäddade. Rumpa kant i kant med opbord. 27° Trendelenburg.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Kontrollera tubläge efter Trendelenburg.',
+  kirurgiskaRisker:['Stor blödning','Rektalskada','Uretärskada','Anastomos/urinavledningsläckage','Tarmskada'],
+  anestesiologiskaRisker:['Massiv blödning/transfusion','Hemodynamisk instabilitet','Respiratoriska komplikationer','Hypotermi (lång op)','Elektrolytrubbningar'],
+  monitorering:['EKG','SpO₂','Invasivt artärtryck (HemoSphere)','CVK vb','TOF','Temperatur','Timdiures'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov',antal:1,obligatorisk:true},
+    {typ:'PVK',storlek:'Standard',antal:2,obligatorisk:true},
+    {typ:'Artärnål',placering:'Radialisartär',obligatorisk:true,kommentar:'HemoSphere'},
+    {typ:'CVK',obligatorisk:false,kommentar:'Ibland vid komplicerad patient'},
+  ],
+  lakemedel:[
+    {namn:'Morfin-spinal',dos:'0,2 mg intratekalt',timing:'Preoperativt',kommentar:'12–18 h postop smärtlindring'},
+    {namn:'Propofol TCI',dos:'Cet per åldersanpassad tabell',timing:'Induktion + underhåll'},
+    {namn:'Remifentanil TCI',dos:'Cet 5–8 ng/ml induktion',timing:'Kontinuerlig infusion'},
+    {namn:'Rokuronium',dos:'0,6–1 mg/kg iv',timing:'Induktion'},
+    {namn:'Betapred',dos:'8 mg iv',timing:'Induktion – PONV-profylax'},
+    {namn:'Noradrenalin',dos:'0,01–0,2 µg/kg/min',timing:'VB vid hypotension'},
+  ],
+  specialutrustning:['DaVinci-robot','Pinkpad','Dropp med förlängare','Bröstband','Blodvärmare','HemoSphere'],
+  checklistor:[
+    {text:'Morfin-spinal anlagd preoperativt (0,2 mg intratekalt)',fas:'preop',kritisk:true},
+    {text:'Artärnål + 3 PVK satta',fas:'preop'},
+    {text:'Betapred 8 mg iv',fas:'induktion'},
+    {text:'Positionering: 27° Trendelenburg, Pinkpad, bröstband',fas:'intraop',kritisk:true},
+    {text:'Dropp kopplade med förlängare (armar inbäddade)',fas:'intraop',kritisk:true},
+    {text:'Blodvärmare ansluten, temperatur >36°C',fas:'intraop'},
+    {text:'TOF-reversering bekräftad',fas:'avslut',kritisk:true},
+    {text:'Smärtlindring + vätsketerapi ordinerat postop',fas:'postop'},
+  ],
+  postopOrdinationer:['Morfin-spinalens effekt 12–18 h','T Alvedon 1 g × 4 po','NSAID per kirurgens ordination','Restriktiv vätsketerapi postop','Tidig mobilisering (ERAS)'],
+  caveat:['Dropp MÅSTE kopplas med förlängare – armar inbäddade','Morfin-spinal täcker 12–18 h postoperativt','Restriktiv vätsketerapi minskar tarmödem'],
+  kallaDokument:['PMI00418-7','PMI00422-1'],
+  nyckelord:['cystektomi','blåscancer','urinblåsa','Trendelenburg'],
+},
+{
+  id:'rektum', namn:'Rektumresektion / APR / ELAPE / TA-TME', kategori:'kolorektal',
+  beskrivning:'Kirurgi vid rektalcancer, utförd laparoskopiskt, robotassisterat eller öppet. Inkluderar hög/låg främre resektion, Hartmann, APR, ELAPE och TA-TME. ERAS-protokoll. TA-TME innebär risk för subkutant emfysem. IBD-patienter kräver extra analgesistrategi.',
+  operationstid:'3–8 timmar', risk:'hog',
+  anestesiteknik:['Generell anestesi','Epiduralanestesi','Spinalanestesi'],
+  anestesiteknikDetalj:'GA + Sevofluran/Remifentanil. EDA obligat vid öppen kirurgi. Morfin-spinal vid robot/lap.',
+  positionering:'Robot/lap: 15° Trendelenburg + 15° lateral tilt. APR: ryggläge → bukläge vid perineal fas.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Kontrollera tubläge vid Trendelenburg och vid lägesändring till bukläge (APR).',
+  kirurgiskaRisker:['Blödning','Anastomosläckage','Uretärskada','Stomiproblematik','Perineal sårläkning (APR/ELAPE)'],
+  anestesiologiskaRisker:['Respiratoriska komplikationer','Hypotermi','PONV','IBD-smärtproblematik','Subkutant emfysem (TA-TME)'],
+  monitorering:['EKG','SpO₂','Kapnografi','Artärnål','CVK (robot-armar inbäddade)','TOF','Temperatur'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov',obligatorisk:true},
+    {typ:'PVK',storlek:'Standard',obligatorisk:true},
+    {typ:'Artärnål',obligatorisk:true},
+    {typ:'CVK',obligatorisk:false,kommentar:'Om armar inbäddade (robot)'},
+    {typ:'EDA',placering:'Th 8–12',obligatorisk:false,kommentar:'Obligat vid öppen op'},
+  ],
+  lakemedel:[
+    {namn:'Remifentanil TCI',dos:'Cet 5–8 ng/ml',timing:'Underhåll'},
+    {namn:'Sevofluran',dos:'Individuell MAC',timing:'Underhåll',kommentar:'ERAS – undvik långverkande opioider'},
+    {namn:'Morfin-spinal (robot/lap)',dos:'0,2 mg intratekalt',timing:'Preoperativt',kommentar:'Ersätter EDA vid robot'},
+    {namn:'Rokuronium + infusion (robot)',dos:'0,6–1 mg/kg iv',timing:'Induktion',kommentar:'Djup relax vid robot'},
+    {namn:'Betapred',dos:'4–8 mg iv',timing:'INNAN kirurgiskt trauma',kommentar:'PONV-profylax'},
+    {namn:'Paracetamol',dos:'1 g iv',timing:'Inför väckning'},
+  ],
+  specialutrustning:['DaVinci-robot / laparoskopi','Pinkpad','Blodvärmare','Rokuronium-infusion (djup relax robot)','EDA-set (öppen op)'],
+  checklistor:[
+    {text:'ERAS: Kolhydratdryck 400 ml morgon, sista vätskor 2 h innan',fas:'preop'},
+    {text:'IBD/Crohn: Smärtanamnes, ev EDA vid laparoskopi',fas:'preop',kritisk:true},
+    {text:'Morfin-spinal (robot/lap) ELLER EDA (öppen)',fas:'preop',kritisk:true},
+    {text:'Betapred 4–8 mg iv givet INNAN kirurgiskt trauma',fas:'induktion',kritisk:true},
+    {text:'Rokuronium-infusion kopplad (djup relax robot)',fas:'induktion'},
+    {text:'Positionering verifierad, tubläge kontrollerat',fas:'intraop',kritisk:true},
+    {text:'APR: Kommunikation med kirurg om lägesändring bukläge',fas:'intraop'},
+    {text:'Temperatur >36°C under hela op',fas:'intraop'},
+    {text:'TOF-reversering bekräftad (kritiskt vid robot)',fas:'avslut',kritisk:true},
+    {text:'EDA fungerande och optimerad postop',fas:'postop'},
+    {text:'ERAS: Tidig mobilisering, oralt intag',fas:'postop'},
+  ],
+  postopOrdinationer:['EDA optimerad','ERAS: Paracetamol 1 g × 4','NSAID i samråd med kirurg','Opioider till lägsta möjliga dos','Tidig mobilisering','Tarmmotilika per kirurg','PONV: Ondansetron/Primperan'],
+  caveat:['ERAS: Undvik långverkande opioider intraoperativt','IBD/Crohn: Kräver ofta extra smärtlindring','TA-TME: Risk för subkutant emfysem','Rokuronium-infusion: TOF-reversering KRITISK'],
+  kallaDokument:['PMI00418-7','PMI00422-1'],
+  nyckelord:['rektumresektion','APR','ELAPE','TA-TME','rektalcancer','ERAS','Hartmann'],
+},
+{
+  id:'kolon', namn:'Kolonresektion / Kolektomi', kategori:'kolorektal',
+  beskrivning:'Kirurgi vid kolonkancer, IBD eller divertikulit. Inkluderar sigmoideumresektion, vänster/höger hemikolektomi, ileocekalresektion och total kolektomi. ERAS-protokoll. IBD-patienter – särskilt Crohn – kräver extra analgesistrategi.',
+  operationstid:'2–5 timmar', risk:'medel',
+  anestesiteknik:['Generell anestesi','Epiduralanestesi'],
+  anestesiteknikDetalj:'GA med Sevofluran + Remifentanil. EDA obligat vid öppen. Kirurgisk TAP-blockad vid robot/laparoskopi.',
+  positionering:'Vänster hemi: 15° Trendelenburg + 15° mot höger, vänster arm inbäddad. Höger hemi: tvärtom.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Kontrollera tubläge vid lateral tilt.',
+  kirurgiskaRisker:['Blödning','Anastomosläckage','Uretärskada','Tarmskada','Stomiproblematik','Infektion (IBD)'],
+  anestesiologiskaRisker:['PONV','Hemodynamisk instabilitet','Hypotermi','Smärtproblematik IBD'],
+  monitorering:['EKG','SpO₂','Kapnografi','NIBP/Artärnål','TOF','Temperatur'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov',obligatorisk:true},
+    {typ:'PVK',storlek:'Standard',obligatorisk:true},
+    {typ:'Artärnål',obligatorisk:false,kommentar:'Vid komorbiditet/lång op'},
+    {typ:'EDA',placering:'Th 8–10',obligatorisk:false,kommentar:'Obligat vid öppen'},
+  ],
+  lakemedel:[
+    {namn:'Remifentanil TCI',dos:'Cet 5–8 ng/ml',timing:'Underhåll'},
+    {namn:'Sevofluran',dos:'Individuell MAC',timing:'Underhåll'},
+    {namn:'Rokuronium',dos:'0,6–1 mg/kg iv',timing:'Induktion'},
+    {namn:'Betapred',dos:'4–8 mg iv',timing:'PONV-profylax'},
+    {namn:'Paracetamol',dos:'1 g iv',timing:'Inför väckning'},
+    {namn:'NSAID i samråd med kirurg',dos:'Dynastat 20–40 mg iv',timing:'Inför väckning'},
+  ],
+  specialutrustning:['Laparoskopi/robot','Blodvärmare','EDA-set (öppen)'],
+  checklistor:[
+    {text:'ERAS-förberedelse: Kolhydratdryck, antibiotikaprofylax',fas:'preop'},
+    {text:'IBD/Crohn: Smärtanamnes – ev extra analgestrategi',fas:'preop',kritisk:true},
+    {text:'EDA om öppen op',fas:'preop'},
+    {text:'Betapred givet INNAN kirurgiskt trauma',fas:'induktion',kritisk:true},
+    {text:'Korrekt opläge: lateral tilt, arm korrekt',fas:'intraop'},
+    {text:'Temperatur >36°C',fas:'intraop'},
+    {text:'TOF-reversering bekräftad',fas:'avslut',kritisk:true},
+    {text:'EDA optimerad postop',fas:'postop'},
+  ],
+  postopOrdinationer:['EDA optimerad (öppen)','ERAS: Paracetamol 1 g × 4','NSAID i samråd med kirurg','Tidig mat + mobilisering','Tarmmotilika'],
+  caveat:['IBD: Alltid smärtanamnes','EDA: RAAS-blockad sätts ut op-dagen'],
+  kallaDokument:['PMI00418-7','PMI00422-1'],
+  nyckelord:['kolonresektion','kolektomi','hemikolektomi','kolonkancer','IBD','Crohn'],
+},
+{
+  id:'ovarialcancer', namn:'Ovarialcancerkirurgi (Öppen)', kategori:'gynekologi',
+  beskrivning:'Öppen kirurgi vid ovarialcancer, ofta heldagsoperation. Kan inkludera carcinos-resektion, diafragma, mjälte, tarmavsnitt. Patienter har ofta ascites och pleuravätska preoperativt. Stora vätskeskiften och massiv blödningsrisk.',
+  operationstid:'4–10 timmar', risk:'mycket_hog',
+  anestesiteknik:['Generell anestesi','Epiduralanestesi'],
+  anestesiteknikDetalj:'GA med endotrakeal intubation + Sevofluran. EDA obligat (hög thorakal Th 6–8). CVK obligat vid heldagsop.',
+  positionering:'Ryggläge. Lång värmemadrass.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Lungskyddande ventilation, PEEP. Atelektasprofylax vid lång op.',
+  kirurgiskaRisker:['Massiv blödning','Organskada (diafragma, mjälte, uretär)','Anastomosläckage','Ascites-komplikationer'],
+  anestesiologiskaRisker:['Massiv blödning/transfusion','Hemodynamisk instabilitet','Hypotermi','Respiratorisk kompromiss (ascites)','Elektrolytrubbningar'],
+  monitorering:['EKG','SpO₂','Invasivt artärtryck (obligat)','CVK','Kapnografi','TOF','Temperatur','Timdiures'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov',antal:2,obligatorisk:true},
+    {typ:'Artärnål',obligatorisk:true},
+    {typ:'CVK',obligatorisk:false,kommentar:'Oftast vid heldagsop'},
+    {typ:'EDA',placering:'Th 6–8 (hög!)',obligatorisk:true},
+  ],
+  lakemedel:[
+    {namn:'Sevofluran + Remifentanil',dos:'Individuell MAC + 0,1–0,6 µg/kg/min',timing:'Underhåll'},
+    {namn:'Betapred',dos:'4–8 mg iv',timing:'Induktion'},
+    {namn:'Albumin 5% eller 20%',dos:'Individuellt',timing:'Stor blödning/ascites'},
+    {namn:'Tranexamsyra (Cyklokapron)',dos:'2 g iv',timing:'Vid massiv blödning'},
+    {namn:'Noradrenalin',dos:'0,01–0,2 µg/kg/min',timing:'VB vid hypotension'},
+  ],
+  specialutrustning:['Artärnål + blodvärmare (obligat)','Högflödesvärmare','EDA-set hög thorakal','CVK-set','ROTEM/TEG','Lång värmemadrass'],
+  checklistor:[
+    {text:'Ascites tappat preoperativt',fas:'preop'},
+    {text:'Nattplats postop bekräftad',fas:'preop',kritisk:true},
+    {text:'EDA lagd (hög thorakal Th 6–8)',fas:'preop',kritisk:true},
+    {text:'Artärnål satt',fas:'preop'},
+    {text:'Blodvärmare + högflödesvärmare kopplat',fas:'induktion'},
+    {text:'Temperatur >36°C under hela op',fas:'intraop',kritisk:true},
+    {text:'Vätskebalans dokumenteras kontinuerligt',fas:'intraop'},
+    {text:'EDA kontrollerad postop',fas:'postop'},
+  ],
+  postopOrdinationer:['EDA optimerad','Daglig kontroll Hb, elektrolyter, koagulation','Restriktiv vätskestrategi','TPN vid behov'],
+  caveat:['Ascites preop påverkar lungor och hemodynamik','Massiv blödningsrisk – transfusionsberedskap','Lång op: Aktiv tempkontroll obligat'],
+  kallaDokument:['PMI00418-7','PMI00422-1'],
+  nyckelord:['ovarialcancer','äggstockscancer','gynekologi','peritonektomi','carcinos','ascites'],
+},
+{
+  id:'thyreoidea', namn:'Thyreoidea- och Parathyreoideaskirurgi', kategori:'endokrin',
+  beskrivning:'Kirurgi på sköldkörteln eller bisköldkörtlarna. NIM-tub (neural integrity monitoring) används nästan alltid vid thyreoidea för att övervaka n. recurrens intraoperativt. Höger arm inbäddad med BT-manschett. Vakuumkudde med schalett för huvudet.',
+  operationstid:'1–4 timmar', risk:'medel',
+  anestesiteknik:['Generell anestesi','TCI'],
+  anestesiteknikDetalj:'GA med NIM-tub (Kvinna stl 7, Man stl 8). TCI Propofol + Remifentanil (Eleveld). NIM kräver konfirmering med kirurg.',
+  positionering:'Ryggläge. Höger arm inbäddad (BT-manschett). Vakuumkudde med schalett. Halsreklinering.',
+  luftvag:'NIM-tub (endotrakeal) – OBLIGAT vid thyreoidea',
+  luftvagDetalj:'NIM-tub: Kvinna stl 7, Man stl 8. Bekräfta elektrodläge mot stämbanden med laryngoskop. Undvik muskelrelax under NIM-testfas.',
+  kirurgiskaRisker:['Skada n. recurrens (heshet)','Hypoparatyreoidism (hypokalcemi postop)','Blödning/hematom (luftvägskompromiss!)','Tracheomalaci (stor struma)'],
+  anestesiologiskaRisker:['Svår intubation (stor struma)','Postop hematom (luftvägskompromiss)','Hypokalcemi postop','NIM-störning vid muskelrelax'],
+  monitorering:['EKG','SpO₂','NIBP (höger arm inbäddad – BT-manschett)','Kapnografi','NIM-elektroder','TOF (OBS – muskelrelax stör NIM!)'],
+  infarter:[
+    {typ:'PVK',storlek:'Standard',placering:'Vänster arm (höger inbäddad!)',obligatorisk:true},
+    {typ:'PVK',placering:'Foten (parathyreoidea – bättre access)',obligatorisk:false},
+  ],
+  lakemedel:[
+    {namn:'Propofol TCI (Eleveld)',dos:'Cet per tabell (höj 0,3–0,5 µg/ml för intubation)',timing:'Induktion + underhåll'},
+    {namn:'Remifentanil TCI (Eleveld)',dos:'Cet 5–8 ng/ml induktion',timing:'Kontinuerlig infusion'},
+    {namn:'PONV-profylax',dos:'Ondansetron 4–8 mg + Betapred 4 mg',timing:'Induktion/väckning'},
+    {namn:'Paracetamol',dos:'1 g iv',timing:'Inför väckning'},
+    {namn:'Morfin',dos:'0,05–0,1 mg/kg iv vb',timing:'Inför väckning'},
+  ],
+  specialutrustning:['NIM-tub (OBLIGAT vid thyreoidea!)','NIM-utrustning','Vakuumkudde med schalett','Skena för armstöd','Dragspel + bred tygtejp'],
+  checklistor:[
+    {text:'CT-hals granskad vid stor struma (trachealdiameter, deviering)',fas:'preop',kritisk:true},
+    {text:'Graves: EKG taget, thyreostatika + Inderal given',fas:'preop',kritisk:true},
+    {text:'NIM-tub rätt storlek: Kvinna stl 7 / Man stl 8',fas:'induktion',kritisk:true},
+    {text:'NIM-elektroder bekräftade mot stämbanden (laryngoskop)',fas:'induktion',kritisk:true},
+    {text:'Muskelrelax: VÄNTA om NIM-testning pågår',fas:'induktion',kritisk:true},
+    {text:'BT-manschett på höger arm INNAN inbäddning',fas:'induktion'},
+    {text:'Vakuumkudde + schalett, halsreklinering säkrad',fas:'intraop'},
+    {text:'Postop: Observera för hematom – luftvägskompromiss',fas:'postop',kritisk:true},
+    {text:'Kalcium kontrolleras postop (hypoparatyreoidism)',fas:'postop',kritisk:true},
+  ],
+  postopOrdinationer:['Kalciumkontroll postop (hypoparatyreoidism vid total thyreoidektomi)','Observera hematom – risk luftvägskompromiss','Röst/stämbandstest vid uppvaknandet','T Alvedon 1 g × 4 po'],
+  caveat:['NIM-tub: Muskelrelax kan störa NIM-signal – kommunicera med kirurg','Postop hematom = AKUT LUFTVÄGSKOMPROMISS','Graves: Aggressiv premedicinering – frikostigt Stesolid'],
+  kallaDokument:['PMI00418-7'],
+  nyckelord:['thyreoidea','sköldkörtel','parathyreoidea','NIM-tub','struma','Graves','hypokalcemi'],
+},
+{
+  id:'hipec', namn:'HIPEC (Hyperthermic Intraperitoneal Chemotherapy)', kategori:'kolorektal',
+  beskrivning:'Öppen tarmkirurgi kombinerat med varm cytostatika-bukhållebad (41°C, 60–90 min). Primärtumören och all synlig peritoneal carcinos tas bort, sedan sköljning med uppvärmd cytostatika. Extremt krävande operation. Aktiv kylning obligat under hypertermisk fas.',
+  operationstid:'8–14 timmar', risk:'mycket_hog',
+  anestesiteknik:['Generell anestesi','Epiduralanestesi'],
+  anestesiteknikDetalj:'GA + Sevofluran. EDA obligat. CVK obligat. Artärkateter obligat.',
+  positionering:'Ryggläge. Lång värmemadrass – aktiv KYLNING under cytostatikafasen.',
+  luftvag:'Endotrakeal intubation',
+  luftvagDetalj:'Lungskyddande ventilation, PEEP. Anpassning under hypertermisk fas.',
+  kirurgiskaRisker:['Massiv blödning','Anastomosläckage','Organskada (multipla organ)','Cytostatika-toxicitet (nefrotoxicitet)'],
+  anestesiologiskaRisker:['Hypertermisk fas: Kärntemp kan överstiga 39°C','Massiv blödning','Elektrolytrubbningar','Koagulopati','Njursvikt','Hemodynamisk instabilitet'],
+  monitorering:['EKG','SpO₂','Invasivt artärtryck','CVK','Kapnografi','TOF','Temperatur kontinuerlig (rektal + esofageal)','Timdiures','ROTEM löpande'],
+  infarter:[
+    {typ:'PVK',storlek:'Grov',antal:2,obligatorisk:true},
+    {typ:'Artärnål',obligatorisk:true},
+    {typ:'CVK',obligatorisk:true,kommentar:'Obligat (om ej venport/PICC)'},
+    {typ:'EDA',placering:'Th 6–8',obligatorisk:true},
+  ],
+  lakemedel:[
+    {namn:'Sevofluran + Remifentanil',dos:'Individuellt',timing:'Underhåll'},
+    {namn:'Betapred',dos:'8 mg iv',timing:'Induktion'},
+    {namn:'Albumin 5% eller 20%',dos:'Individuellt',timing:'Stor blödning/hypertermisk fas'},
+    {namn:'Noradrenalin',dos:'0,01–0,2 µg/kg/min',timing:'VB vid hypotension'},
+    {namn:'Tranexamsyra',dos:'2 g iv',timing:'Vid koagulopati/blödning'},
+    {namn:'Kalium + Magnesium',dos:'Substituera per analyser',timing:'Intraoperativt'},
+  ],
+  specialutrustning:['Kontinuerlig tempmonitorering (rektal + esofageal)','Kylningsutrustning (is, kylande infusioner)','ROTEM/TEG','Blodvärmare','EDA-set hög thorakal','CVK-set','Cytostatika-skyddsutrustning'],
+  checklistor:[
+    {text:'Patientens kondition bedömd – god vigör krävs för HIPEC',fas:'preop',kritisk:true},
+    {text:'Nattplats postop bekräftad',fas:'preop',kritisk:true},
+    {text:'EDA Th 6–8 lagd',fas:'preop',kritisk:true},
+    {text:'Artärnål + blodvärmare kopplat',fas:'induktion'},
+    {text:'Kontinuerlig tempmonitorering aktiverad',fas:'induktion',kritisk:true},
+    {text:'Hypertermisk fas: Aktivt kyla patient (is i axiller, kylande infusioner)',fas:'intraop',kritisk:true},
+    {text:'Personalen bär skyddsutrustning under cytostatikafasen',fas:'intraop'},
+    {text:'Elektrolytsubstitution löpande',fas:'intraop'},
+    {text:'ROTEM om koagulopati',fas:'intraop'},
+    {text:'EDA fungerande postop',fas:'postop'},
+    {text:'Njurfunktion följs noga',fas:'postop'},
+  ],
+  postopOrdinationer:['Intensivvård/postop – planerat','EDA optimerad','Daglig kontroll Hb, elektrolyter, kreatinin','Renal protektion – välhydrerad'],
+  caveat:['⚠️ Hypertermisk fas: Aktiv kylning obligat – kärntemp kan stiga farligt','⚠️ Cytostatika: Skyddsutrustning vid hantering','Koagulopatirisk stor – ROTEM bör finnas','Njurskydd – välhydrerad patient'],
+  kallaDokument:['PMI00418-7'],
+  nyckelord:['HIPEC','carcinos','peritoneal','cytostatika','hypertemi','kolorektal'],
+},
+{
+  id:'aorta', namn:'Komplicerad Endovaskulär Aortakirurgi (FEVAR/TEVAR/GrEVAR)', kategori:'karloperation',
+  beskrivning:'Endovaskulär behandling av komplicerade aortaaneurysm. TEVAR (thorakalt), FEVAR (fenestrerat) och GrEVAR (grenat) kräver avancerade specialdesignade graft. Risk för spinal ischemi kräver beredskap med spinaldrän. Extremiteternas infarter otillgängliga efter sterilklädning.',
+  operationstid:'3–8 timmar', risk:'mycket_hog',
+  anestesiteknik:['Generell anestesi'],
+  anestesiteknikDetalj:'GA i första hand (lång op, apnébehov). LA/sedering/SPA möjligt vid okomplicerade fall. Planera noradrenalininfusion.',
+  positionering:'Ryggläge. Accesser från ljumskar + ev arm/hals/subclavia. Inga synliga extremiteter efter sterilklädning.',
+  luftvag:'Endotrakeal intubation (vid GA)',
+  luftvagDetalj:'Lugn hemodynamik vid intubation.',
+  kirurgiskaRisker:['Endoleak','Organischemi (njurar, tarmar, ben)','Spinal ischemi','Blödning (1000+ ml från grova introducers)','Stroke'],
+  anestesiologiskaRisker:['Spinal ischemi (MAP >100 mmHg vid spinaldrän)','Cerebrala embolier (ledare högt i aorta)','Takyarytmi (ledare i VK)','Kontrastnefropati','Massiv blödning'],
+  monitorering:['EKG (5-avl)','SpO₂','Invasivt artärtryck (dubbla vid ballongocklusion)','CVK (obligat vid spinaldrän)','TEE (vid GA)','Timdiures','Neurologisk kontroll postop','Myoglobin postop'],
+  infarter:[
+    {typ:'Artärnål',placering:'Höger radialisartär (ev dubbla)',obligatorisk:true},
+    {typ:'CVK',obligatorisk:false,kommentar:'Obligat om spinaldrän (noradrenalin för CPP)'},
+    {typ:'PVK',storlek:'Grov',antal:2,obligatorisk:true,kommentar:'Sätts INNAN sterilklädning!'},
+    {typ:'Spinaldrän',placering:'Lumbal – per ordination',obligatorisk:false,kommentar:'Separat riktlinje'},
+  ],
+  lakemedel:[
+    {namn:'Propofol TCI (Eleveld)',dos:'Cet 2–4 µg/ml',timing:'Induktion + underhåll'},
+    {namn:'Remifentanil TCI',dos:'Cet 5–8 ng/ml',timing:'Kontinuerlig infusion'},
+    {namn:'Rokuronium',dos:'0,6–1 mg/kg iv',timing:'Induktion'},
+    {namn:'Noradrenalin 40 µg/ml',dos:'0,01–0,2 µg/kg/min',timing:'Kontinuerlig infusion',kommentar:'MAP >100 mmHg vid spinaldrän'},
+    {namn:'Heparin',dos:'Per kirurgens ordination',timing:'Intraoperativt'},
+  ],
+  specialutrustning:['Röntgen-/hybridsal','Spinaldrän-set (per ordination)','TEE-probe','Blodvärmare','Artärset höger arm (ev dubbla)'],
+  checklistor:[
+    {text:'Nattplats CIVA bekräftad (2 nätter vid spinaldrän)',fas:'preop',kritisk:true},
+    {text:'Operationskonferens genomförd',fas:'preop',kritisk:true},
+    {text:'Artärnål höger arm satt (ev dubbla)',fas:'preop',kritisk:true},
+    {text:'ALLA infarter satta INNAN sterilklädning',fas:'induktion',kritisk:true},
+    {text:'Noradrenalininfusion förberedd',fas:'induktion'},
+    {text:'TEE kopplad vid GA',fas:'induktion'},
+    {text:'Ledare i VK: be operatör backa (arytmirisk)',fas:'intraop',kritisk:true},
+    {text:'Spinaldrän: MAP >100 mmHg, ICP <10 mmHg',fas:'intraop',kritisk:true},
+    {text:'Hb >100 g/l (spinal oxygenering)',fas:'intraop'},
+    {text:'Postop: Neurologi, perifer cirkulation, njur, myoglobin',fas:'postop',kritisk:true},
+  ],
+  postopOrdinationer:['CIVA-vård 2 nätter (spinaldrän)','Neurologi var timme initial fas','Perifer cirkulation (ben, ABI)','Njur: kreatinin, diures, myoglobin','MAP >100 mmHg (spinal oxygenering)'],
+  caveat:['⚠️ Extremiteter OTILLGÄNGLIGA efter sterilklädning – säkra ALLA infarter INNAN','⚠️ Spinal ischemi: MAP >100 mmHg är VIKTIGAST','Takyarytmi vid ledare i VK – be operatör backa','MR KONTRAINDICERAT (stentgraft) – CT vid neurologisk komplikation'],
+  kallaDokument:['PMI00534-1','Riktlinje Spinaldrän och spinal ischemi'],
+  nyckelord:['aortaaneurysm','FEVAR','TEVAR','GrEVAR','EVAR','spinaldrän','spinal ischemi','aorta'],
+},
+{
+  id:'brachygyn', namn:'Brachyterapi – Cervixcancer (Gyn)', kategori:'brachy',
+  beskrivning:'Brachybehandling av cervixcancer. Proceduren inkluderar: inläggning strålkälla → MR-undersökning → dosplanering → behandling → uttagning. MR-kompatibla EKG-elektroder är OBLIGAT. Uttagning kan kräva tillägg av kort masknarkos om spinalen hunnit släppa.',
+  operationstid:'2–5 timmar (total procedurtid inkl. MR)', risk:'medel',
+  anestesiteknik:['Spinalanestesi','Generell anestesi'],
+  anestesiteknikDetalj:'SPA förstahand: Marcain tung 15–17 mg + Sufenta 5 µg + Catapresan 15 µg (extra lång duration). GA om spinal kontraindicerat.',
+  positionering:'Ryggläge (gynekologisk position för proceduren).',
+  luftvag:'Spontanandning vid SPA. Mask/LMA vid GA.',
+  luftvagDetalj:'Kommunicera med strålläkare om smärtsamma moment.',
+  kirurgiskaRisker:['Blödning vid kateterinläggning','Uterus-/vaginalskada','Felplacering strålkälla'],
+  anestesiologiskaRisker:['Spinal för kort duration (uttagning smärtsamt)','Blodtrycksfall (spinal)','Trombocytopeni (kemoterapi – blödningsrisk vid spinal!)'],
+  monitorering:['EKG (MR-kompatibla elektroder – OBLIGAT!)','SpO₂','NIBP var 5:e min','Bromage-skala'],
+  infarter:[{typ:'PVK',storlek:'Standard',obligatorisk:true}],
+  lakemedel:[
+    {namn:'Bupivakain tung (Marcain spinal tung)',dos:'15–17 mg',timing:'Spinalanestesi'},
+    {namn:'Sufentanil (Sufenta)',dos:'5 µg intratekalt',timing:'Tillägg spinal – förlänger duration'},
+    {namn:'Klonidin (Catapresan)',dos:'15 µg intratekalt',timing:'Tillägg spinal – förlänger ytterligare'},
+    {namn:'Efedrin',dos:'5–10 mg iv vb',timing:'VB blodtrycksfall'},
+  ],
+  specialutrustning:['MR-kompatibla EKG-elektroder (OBLIGAT!)','SPA-set','Brachysal G5 (NKS)'],
+  checklistor:[
+    {text:'Trombocytstatus kontrollerat (kemoterapi → trombocytopeni?)',fas:'preop',kritisk:true},
+    {text:'MR-kompatibla EKG-elektroder applicerade',fas:'preop',kritisk:true},
+    {text:'Efedrin förberedd på sal',fas:'preop'},
+    {text:'SPA: Marcain tung 15–17 mg + Sufenta 5 µg + Catapresan 15 µg',fas:'induktion',kritisk:true},
+    {text:'BT var 5:e min de första 30 min',fas:'intraop'},
+    {text:'Kommunikation med strålläkare om smärtsamma moment',fas:'intraop',kritisk:true},
+    {text:'Patient i MR (anestesiolog lämnar under strålning)',fas:'intraop'},
+    {text:'Bromage = 0 vid utskrivning',fas:'postop'},
+    {text:'Miktions-OBS tills Bromage = 0',fas:'postop'},
+  ],
+  postopOrdinationer:['BT var 15 min tills Bromage = 0','KAD kvar tills uppegående','T Alvedon + NSAID vb'],
+  caveat:['⚠️ MR-kompatibla EKG-elektroder OBLIGAT','⚠️ Trombocytopeni: Alternativt schema – söv/väck/söv','Strålkällan hanteras av strålläkare – strålskydd'],
+  kallaDokument:['PMI00446-1'],
+  nyckelord:['brachy','brachyterapi','cervixcancer','MR-kompatibel','spinalanestesi'],
+},
+{
+  id:'brachyprostata', namn:'Brachyterapi – Prostatacancer', kategori:'brachy',
+  beskrivning:'Brachybehandling av prostatacancer. Spinalanestesi förstahandsval. Patienten lämnas ensam på salen 15 minuter under strålning. Singelbehandling är längre och kräver Catapresan-tillägg för extra duration.',
+  operationstid:'1–3 timmar', risk:'lag',
+  anestesiteknik:['Spinalanestesi','Generell anestesi'],
+  anestesiteknikDetalj:'SPA förstahand: Marcain tung 15–17 mg + Sufenta 5 µg. Singelbehandling: tillägg Catapresan 15 µg.',
+  positionering:'Ryggläge (litotomiposition under proceduren).',
+  luftvag:'Spontanandning vid SPA.',
+  kirurgiskaRisker:['Uretralskada','Rektumskada','Hematom'],
+  anestesiologiskaRisker:['Blodtrycksfall (spinal)','Spinal för kort duration (singelbehandling)'],
+  monitorering:['EKG','SpO₂','NIBP var 5 min'],
+  infarter:[{typ:'PVK',storlek:'Standard',obligatorisk:true}],
+  lakemedel:[
+    {namn:'Bupivakain tung (Marcain spinal tung)',dos:'15–17 mg',timing:'Spinalanestesi'},
+    {namn:'Sufentanil (Sufenta)',dos:'5 µg intratekalt',timing:'Tillägg spinal'},
+    {namn:'Klonidin (Catapresan)',dos:'15 µg intratekalt',timing:'BARA singelbehandling – förlänger duration'},
+    {namn:'Efedrin',dos:'5–10 mg iv vb',timing:'VB blodtrycksfall'},
+  ],
+  specialutrustning:['SPA-set','Brachyterapi-utrustning','Brachysal G5 (NKS)'],
+  checklistor:[
+    {text:'Trombyl UTSATT (alla prostataingrepp)',fas:'preop',kritisk:true},
+    {text:'SPA: Marcain tung 15–17 mg + Sufenta 5 µg (+ Catapresan 15 µg om singelbehandling)',fas:'induktion',kritisk:true},
+    {text:'BT var 5 min de första 30 min',fas:'intraop'},
+    {text:'Patient lämnas ensam 15 min under strålning – monitorering funkar',fas:'intraop'},
+    {text:'Bromage = 0 vid utskrivning',fas:'postop'},
+  ],
+  postopOrdinationer:['Miktions-OBS','T Alvedon vb','Trombosprofylax per urolog'],
+  caveat:['Trombyl MÅSTE sättas ut preoperativt','Patient ensam 15 min under strålning – kontrollera monitorering','Singelbehandling: Catapresan tillägg obligat'],
+  kallaDokument:['PMI00446-1'],
+  nyckelord:['brachy','brachyterapi','prostatacancer','singelbehandling'],
+},
+{
+  id:'spinalforlossning', namn:'Spinalanalgesi vid Vaginal Förlossning', kategori:'obstetrik',
+  beskrivning:'Singel-shot spinalanalgesi för omföderska i sent öppningsskede (≥7 cm). Lämplig när förlossning förväntas inom 2 timmar. Anestesiläkaren stannar 30 minuter efter administration. CTG-övervakning obligat.',
+  operationstid:'Förlossning förväntas inom 2 timmar', risk:'lag',
+  anestesiteknik:['Spinalanestesi'],
+  anestesiteknikDetalj:'Singel-shot SPA: 0,5 ml bupivakain normobar 5 mg/ml (= 2,5 mg) + 1 ml sufentanil 5 µg/ml (= 5 µg). Totalt 1,5 ml.',
+  positionering:'Sittande eller sidoläge vid spinalläggning. Förlossningssal.',
+  luftvag:'Spontanandning',
+  luftvagDetalj:'Vaken patient. Oxymask 10 L/min redo.',
+  kirurgiskaRisker:['Förlossning fortskrider snabbare/långsammare','Forceps/vakuum kan behövas'],
+  anestesiologiskaRisker:['Blodtrycksfall (vena cava)','Högt spinalblock','Pruritus (sufentanil)'],
+  monitorering:['CTG (kontinuerlig – OBLIGAT)','NIBP var 5:e min (30 min)','SpO₂','Bromage-skala'],
+  infarter:[{typ:'PVK',storlek:'Standard',obligatorisk:true,kommentar:'Ringer-Acetat 1000 ml kopplad'}],
+  lakemedel:[
+    {namn:'Bupivakain normobar (spinal)',dos:'0,5 ml = 2,5 mg intratekalt',timing:'Single-shot spinal'},
+    {namn:'Sufentanil 5 µg/ml',dos:'1 ml = 5 µg intratekalt',timing:'Tillägg spinal'},
+    {namn:'Efedrin',dos:'5–10 mg iv',timing:'VB blodtrycksfall'},
+    {namn:'Ringer-Acetat 1000 ml',dos:'Pågående basinfusion',timing:'Före och under proceduren'},
+  ],
+  specialutrustning:['EDA/SPA-vagn','CTG-apparat (kontinuerlig)','Oxymask','Spinal kit (Whitacre/Sprotte)'],
+  checklistor:[
+    {text:'Omföderska, cervix ≥7 cm, förlossning förväntas inom 2 h',fas:'preop',kritisk:true},
+    {text:'Obstetriker + barnmorska samtycker',fas:'preop',kritisk:true},
+    {text:'PVK satt, Ringer-Acetat 1000 ml kopplad och pågår',fas:'preop',kritisk:true},
+    {text:'CTG kopplad och fungerande',fas:'preop',kritisk:true},
+    {text:'Efedrin/fenylefrin förberedd på sal',fas:'preop'},
+    {text:'SPA: Bupivakain 2,5 mg + Sufentanil 5 µg',fas:'induktion',kritisk:true},
+    {text:'CTG kontinuerlig – ökad risk hypotension',fas:'intraop',kritisk:true},
+    {text:'BT var 5:e min (30 min) – anestesiolog stannar kvar',fas:'intraop',kritisk:true},
+    {text:'Bromage = 0 – mat och dryck kan ges',fas:'postop'},
+    {text:'Miktions-OBS 12 h',fas:'postop'},
+  ],
+  postopOrdinationer:['CTG till Bromage = 0','BT var 15 min tills Bromage = 0','Mat och dryck när Bromage = 0','Miktions-OBS 12 h'],
+  caveat:['EJ lämpligt om förlossning drar ut – singel-shot, kan ej upprepas','Vena cava: Undvik ryggläge – lateral position','Om förlossning drar ut: syntocinon för att utnyttja kvarvarande analgesi'],
+  kallaDokument:['PMI00538-1'],
+  nyckelord:['förlossning','spinalanalgesi','obstetrik','vaginal','omföderska'],
+},
+{
+  id:'spinalBristning', namn:'Spinalanestesi – Suturering Förlossningsbristning', kategori:'obstetrik',
+  beskrivning:'Sittspinal på förlossningssal för suturering av grad I–II bristning samt utvalda grad III. Sittspinalens korta duration kräver att suturering påbörjas OMEDELBART. EDA måste dras INNAN sittspinal läggs.',
+  operationstid:'30–90 minuter', risk:'lag',
+  anestesiteknik:['Spinalanestesi'],
+  anestesiteknikDetalj:'Sittspinal: 4–5 mg hyperbar bupivakain. Patienten sittande 3–5 min. Suturering startas OMEDELBART.',
+  positionering:'Sittande vid spinalläggning. Dorsalt litotomiläge (benstöd) för suturering.',
+  luftvag:'Spontanandning',
+  luftvagDetalj:'Oxymask 10 L/min vid andningspåverkan.',
+  kirurgiskaRisker:['Komplex bristning identifieras peroperativt','Blödning'],
+  anestesiologiskaRisker:['Blodtrycksfall (sittspinal – snabb hypotension)','Spinal för kort duration','Bradykardi'],
+  monitorering:['NIBP automatisk var 2:e min initialt','SpO₂','Bromage-skala'],
+  infarter:[{typ:'PVK',storlek:'Standard',obligatorisk:true,kommentar:'Ringer-Acetat kopplad'}],
+  lakemedel:[
+    {namn:'Hyperbar bupivakain',dos:'4–5 mg intratekalt (sittspinal)',timing:'Engångsinjektion'},
+    {namn:'Efedrin',dos:'5–10 mg iv',timing:'VB systoliskt <90 mmHg'},
+    {namn:'Ringer-Acetat',dos:'Snabb infusion vid hypotension',timing:'Pågående'},
+  ],
+  specialutrustning:['EDA/SPA-vagn','Hyperbar bupivakain','Benstöd/litotomistöd','Automatisk BT-mätare (2 min-intervall)'],
+  checklistor:[
+    {text:'Obstetriker kontaktat anestesin (tel 71392/71433)',fas:'preop',kritisk:true},
+    {text:'Exklusionskriterier uteslutna (blödning <1000 ml, ej grad IV)',fas:'preop',kritisk:true},
+    {text:'PVK fungerande, Ringer-Acetat kopplad',fas:'preop',kritisk:true},
+    {text:'Befintlig EDA dragen INNAN sittspinal',fas:'induktion',kritisk:true},
+    {text:'SPA sittande: 4–5 mg hyperbar bupivakain',fas:'induktion',kritisk:true},
+    {text:'Patient sittande 3–5 min efter injektion',fas:'induktion'},
+    {text:'Obstetriker PÅBÖRJAR SUTURERING OMEDELBART',fas:'induktion',kritisk:true},
+    {text:'BT var 2:e min initialt',fas:'intraop',kritisk:true},
+    {text:'Bromage = 0 – mat och dryck serveras',fas:'postop'},
+    {text:'KAD avlägsnas när uppegående. Miktions-OBS 12 h.',fas:'postop'},
+  ],
+  postopOrdinationer:['BT var 15 min tills Bromage = 0','Mat när Bromage = 0','Miktions-OBS 12 h','KAD avlägsnas när uppegående'],
+  caveat:['STARTA SUTURERING OMEDELBART – kort duration!','EDA MÅSTE dras INNAN sittspinal','BT-fall: <90 mmHg systoliskt = BEHANDLA omedelbart'],
+  kallaDokument:['PMI02187-1'],
+  nyckelord:['bristning','förlossningsbristning','sittspinal','obstetrik','suturering','hyperbar'],
+},
+{
+  id:'trauma', namn:'Trauma / Massiv okontrollerad blödning', kategori:'trauma',
+  beskrivning:'Akut handläggning vid massiv traumatisk blödning. Massiv transfusion = ≥10 erytrocytenheter/24 h eller ≥4 enheter/timme. Helblod (O RhD pos/neg) vid okänd blodgrupp. Komponentterapi ratio 4:4:1 (erytrocyter:plasma:trombocyter). ROTEM-monitorering är central.',
+  operationstid:'Variabel – akut situation', risk:'mycket_hog',
+  anestesiteknik:['Generell anestesi'],
+  anestesiteknikDetalj:'RSI. Ketamin vid hemodynamisk instabilitet. Minimal anestesidjup vid kritisk instabilitet.',
+  positionering:'Per kirurgisk indikation.',
+  luftvag:'Endotrakeal intubation (RSI)',
+  luftvagDetalj:'RSI om magsäcken ej tom. Ketamin + suxameton. Esmeron + Sugammadex-beredskap om suxameton kontraindicerat.',
+  kirurgiskaRisker:['Okontrollerad blödning','Organskada','Koagulopati'],
+  anestesiologiskaRisker:['Hypovolemi/chock','Koagulopati (DIC)','Hypotermi','Acidos','Hypokalcemi (massiv transfusion)','ARDS'],
+  monitorering:['EKG','SpO₂','Invasivt artärtryck','CVK','Kapnografi','Temperatur','ROTEM (OBLIGAT)','Blodgas löpande','Timdiures'],
+  infarter:[
+    {typ:'PVK',storlek:'Grova (2 st)',obligatorisk:true,kommentar:'Ev IO vid svår PVK'},
+    {typ:'CVK',obligatorisk:true,kommentar:'Snabbt när stabil nog'},
+    {typ:'Artärnål',obligatorisk:true,kommentar:'Artärtryck + blodgaser'},
+  ],
+  lakemedel:[
+    {namn:'Helblod (O RhD pos/neg)',dos:'Transfundera tills blodgrupp känd',timing:'OMEDELBART',kommentar:'Max 2 påsar. O RhD neg vid fertil kvinna om okänd blodgrupp'},
+    {namn:'Komponentterapi 4:4:1',dos:'Erytrocyter:Plasma:Trombocyter',timing:'När blodgrupp känd'},
+    {namn:'Fibrinogenkoncentrat (Riastap)',dos:'2–4 g iv',timing:'Tidigt – mål >2–2,5 g/l'},
+    {namn:'Tranexamsyra (Cyklokapron)',dos:'2 g iv',timing:'Tidigt (inom 3 h trauma)'},
+    {namn:'Calcium-Sandoz',dos:'10 ml iv – upprepa tills Ca²⁺ >1 mmol/l',timing:'Vid massiv transfusion'},
+    {namn:'Ketamin',dos:'2 mg/kg iv (0,5–1 mg/kg vid instabilitet)',timing:'Induktion RSI',kommentar:'Förstahandsval vid chock'},
+    {namn:'Suxameton (Celocurin)',dos:'1 mg/kg iv',timing:'RSI',kommentar:'CAVE hyperkalemi, brännskador'},
+    {namn:'Noradrenalin',dos:'0,01–0,5 µg/kg/min',timing:'VB refraktär hypotension'},
+  ],
+  specialutrustning:['ROTEM (citratrör till blodcentralen)','Högflödesvärmare (Belmont)','Rapid infuser','Blodkyl med helblod','Fibrinogen 8×1g + Confidex 4×500E i läkemedelsförrådet'],
+  checklistor:[
+    {text:'Blodgrupp + bastest beställt OMEDELBART',fas:'preop',kritisk:true},
+    {text:'O-neg E-konc + AB-plasma hämtat (4+4 enheter)',fas:'preop',kritisk:true},
+    {text:'Helblod O RhD pos/neg – kontrollera blodkyl akutop',fas:'preop',kritisk:true},
+    {text:'Tranexamsyra 2 g iv givet tidigt',fas:'induktion',kritisk:true},
+    {text:'Calcium-Sandoz 10 ml iv – upprepa tills Ca²⁺ >1 mmol/l',fas:'induktion',kritisk:true},
+    {text:'Fibrinogen 2–4 g iv – mål >2–2,5 g/l',fas:'induktion',kritisk:true},
+    {text:'ROTEM startat – citratrör skickat',fas:'intraop',kritisk:true},
+    {text:'Temperatur kontrolleras – bekämpa hypotermi',fas:'intraop',kritisk:true},
+    {text:'Blodgas löpande – acidos och elektrolyter',fas:'intraop',kritisk:true},
+    {text:'Komponentterapi 4:4:1 när blodgrupp känd',fas:'intraop',kritisk:true},
+    {text:'Målvärden: Hb>100, TPK>100, Fibrinogen>2, PK<1,5, pH>7,2, Ca²⁺>1',fas:'avslut',kritisk:true},
+  ],
+  postopOrdinationer:['Intensivvård obligat','ROTEM/koagulationsprover fortsatt','Temperaturkontroll','Njur: diures, kreatinin','Blodcentral: fertil kvinna + RhD pos helblod – Rh-immunisering?'],
+  caveat:['⚠️ Helblod: O RhD NEG vid fertil kvinna med OKÄND blodgrupp','Tranexamsyra: Effekt bäst inom 3 h från trauma','Calcium OBLIGAT vid massiv transfusion','ROTEM är överordnat standardkoag-prover'],
+  kallaDokument:['PMI00535-1','PMI00384-1'],
+  nyckelord:['trauma','blödning','massiv transfusion','helblod','ROTEM','tranexamsyra','RSI','akut'],
+},
+]; // end GUIDER
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+
+let state = {
+  sokText: '',
+  valdKategori: null,
+  valdGuide: null,
+  detailTab: 'oversikt',
+  sidebarTab: 'guider',
+  checkState: {}, // guideId -> { checkId -> bool }
+  valdCheckFas: 'preop',
+  drugExpanded: {},
+  drugFilter: 'alla',
+};
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderKategorier();
+  renderGuideList();
+  renderLakemedelPanel();
+  renderOmPanel();
+});
+
+// ═══════════════════════════════════════════════════════════
+//  SIDEBAR TAB
+// ═══════════════════════════════════════════════════════════
+
+function setSidebarTab(tab, btn) {
+  state.sidebarTab = tab;
+  document.querySelectorAll('.sidebar-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('tab-guider').style.display = tab === 'guider' ? '' : 'none';
+  document.getElementById('tab-lakemedel').style.display = tab === 'lakemedel' ? '' : 'none';
+  document.getElementById('tab-om').style.display = tab === 'om' ? '' : 'none';
+
+  document.getElementById('guide-detail').style.display = 'none';
+  document.getElementById('detail-empty').style.display = 'none';
+  document.getElementById('lm-panel').style.display = tab === 'lakemedel' ? '' : 'none';
+  document.getElementById('om-panel').style.display = tab === 'om' ? '' : 'none';
+
+  if (tab === 'guider') {
+    if (state.valdGuide) {
+      document.getElementById('guide-detail').style.display = '';
+    } else {
+      document.getElementById('detail-empty').style.display = '';
+    }
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KATEGORI & SÖKNING
+// ═══════════════════════════════════════════════════════════
+
+function renderKategorier() {
+  const catMap = {};
+  GUIDER.forEach(g => { catMap[g.kategori] = (catMap[g.kategori]||0) + 1; });
+
+  let html = '';
+  Object.entries(catMap).forEach(([kat, cnt]) => {
+    const k = KATEGORIER[kat];
+    html += `<button class="cat-btn" onclick="setKategori('${kat}', this)">
+      <span class="cat-dot" style="background:${k.farg}"></span>
+      ${k.ikon} ${k.namn}
+      <span class="cat-count">${cnt}</span>
+    </button>`;
+  });
+  document.getElementById('cat-list').innerHTML = html;
+  document.getElementById('count-all').textContent = GUIDER.length;
+}
+
+function setKategori(kat, btn) {
+  state.valdKategori = kat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGuideList();
+}
+
+function onSearch(val) {
+  state.sokText = val.toLowerCase();
+  renderGuideList();
+}
+
+function filtredeGuider() {
+  return GUIDER.filter(g => {
+    if (state.valdKategori && g.kategori !== state.valdKategori) return false;
+    if (!state.sokText) return true;
+    const s = state.sokText;
+    return g.namn.toLowerCase().includes(s)
+      || g.kategori.toLowerCase().includes(s)
+      || (g.nyckelord||[]).some(k => k.toLowerCase().includes(s))
+      || g.beskrivning.toLowerCase().includes(s);
+  });
+}
+
+function renderGuideList() {
+  const guider = filtredeGuider();
+  if (!guider.length) {
+    document.getElementById('guide-list').innerHTML = `
+      <div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">
+        Inga guider matchade sökningen.<br>
+        <button onclick="clearFilter()" style="margin-top:8px;padding:5px 12px;border:1px solid var(--border);background:none;border-radius:6px;cursor:pointer;font-size:12px">Rensa filter</button>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  guider.forEach(g => {
+    const kat = KATEGORIER[g.kategori];
+    const risk = RISK[g.risk];
+    const progress = getProgress(g);
+    const isActive = state.valdGuide?.id === g.id ? 'active' : '';
+
+    html += `<div class="guide-item ${isActive}" onclick="selectGuide('${g.id}')">
+      <div class="guide-item-name">${g.namn}</div>
+      <div class="guide-item-meta">
+        <span class="badge" style="background:${kat.farg}22;color:${kat.farg}">
+          ${kat.ikon} ${kat.namn}
+        </span>
+        <span class="risk-badge" style="background:${risk.bg};color:${risk.farg}">${risk.text}</span>
+      </div>
+      ${progress > 0 ? `<div class="guide-progress">
+        <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progress*100}%"></div></div>
+      </div>` : ''}
+    </div>`;
+  });
+  document.getElementById('guide-list').innerHTML = html;
+}
+
+function clearFilter() {
+  state.sokText = '';
+  state.valdKategori = null;
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.cat-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === 0);
+  });
+  renderGuideList();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GUIDE DETAIL
+// ═══════════════════════════════════════════════════════════
+
+function selectGuide(id) {
+  state.valdGuide = GUIDER.find(g => g.id === id);
+  state.detailTab = 'oversikt';
+  state.valdCheckFas = 'preop';
+  state.sidebarTab = 'guider';
+
+  document.getElementById('detail-empty').style.display = 'none';
+  document.getElementById('lm-panel').style.display = 'none';
+  document.getElementById('om-panel').style.display = 'none';
+  document.getElementById('guide-detail').style.display = '';
+
+  renderGuideList();
+  renderDetailHero();
+  renderDetailChips();
+  renderDetailTabs();
+  renderDetailContent('oversikt');
+
+  // On mobile close sidebar
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+function renderDetailHero() {
+  const g = state.valdGuide;
+  const kat = KATEGORIER[g.kategori];
+  document.getElementById('detail-hero').style.background =
+    `linear-gradient(135deg, ${kat.farg} 0%, ${kat.farg}CC 100%)`;
+  document.getElementById('detail-hero').innerHTML = `
+    <div class="detail-hero-content">
+      <div class="detail-hero-cat">${kat.ikon} ${kat.namn.toUpperCase()}</div>
+      <div class="detail-hero-title">${g.namn}</div>
+      <div class="detail-hero-time">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" transform="scale(.58)"/><path d="M12 6v6l4 2" transform="scale(.58)"/></svg>
+        ${g.operationstid}
+      </div>
+    </div>`;
+}
+
+function renderDetailChips() {
+  const g = state.valdGuide;
+  const risk = RISK[g.risk];
+  document.getElementById('detail-chips').innerHTML = `
+    <div class="detail-chip">
+      <div class="detail-chip-label">OPERATIONSTID</div>
+      <div class="detail-chip-val">${g.operationstid}</div>
+    </div>
+    <div class="detail-chip">
+      <div class="detail-chip-label">RISKNIVÅ</div>
+      <div class="detail-chip-val" style="color:${risk.farg};font-weight:700">${risk.text}</div>
+    </div>
+    <div class="detail-chip">
+      <div class="detail-chip-label">LUFTVÄG</div>
+      <div class="detail-chip-val">${g.luftvag}</div>
+    </div>`;
+}
+
+function renderDetailTabs() {
+  const progress = getProgress(state.valdGuide);
+  const progressLabel = progress > 0 ? ` (${Math.round(progress*100)}%)` : '';
+  // Reset tab buttons
+  document.querySelectorAll('.detail-tab').forEach((t,i) => {
+    t.classList.toggle('active', i === 0);
+  });
+}
+
+function setDetailTab(tab, btn) {
+  state.detailTab = tab;
+  document.querySelectorAll('.detail-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['oversikt','lakemedel-detail','checklista','postop'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = 'none';
+  });
+  document.getElementById('tab-' + (tab === 'lakemedel' ? 'lakemedel-detail' : tab)).style.display = '';
+  renderDetailContent(tab);
+}
+
+function renderDetailContent(tab) {
+  const g = state.valdGuide;
+  if (tab === 'oversikt') renderOversikt(g);
+  else if (tab === 'lakemedel') renderLakemedelDetail(g);
+  else if (tab === 'checklista') renderChecklista(g);
+  else if (tab === 'postop') renderPostop(g);
+}
+
+// ─── Översikt ───
+function renderOversikt(g) {
+  let html = '';
+
+  // Caveat
+  if (g.caveat?.length) {
+    html += `<div class="caveat-box">
+      <div class="caveat-title">⚠️ VIKTIGA VARNINGAR</div>
+      ${g.caveat.map(c => `<div class="caveat-item"><span>▸</span><span>${c}</span></div>`).join('')}
+    </div>`;
+  }
+
+  // Beskrivning
+  html += card('INGREPP', '📋', `<p style="font-size:13px;line-height:1.6;color:var(--text)">${g.beskrivning}</p>`);
+
+  // Anestesiteknik
+  html += card('ANESTESITEKNIK', '🔬', `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      ${g.anestesiteknik.map(a => `<span class="badge" style="background:var(--navy-pale);color:var(--navy)">${a}</span>`).join('')}
+    </div>
+    <p style="font-size:13px;color:var(--text-2);line-height:1.5">${g.anestesiteknikDetalj}</p>
+  `);
+
+  // Positionering
+  html += card('POSITIONERING', '🛏️', `
+    <p style="font-size:13px;font-weight:600;margin-bottom:6px">${g.positionering}</p>
+    ${g.positioneringDetalj ? `<p style="font-size:12px;color:var(--text-3)">${g.positioneringDetalj}</p>` : ''}
+  `);
+
+  // Luftväg
+  html += card('LUFTVÄGSHANTERING', '🫁', `
+    <p style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">${g.luftvag}</p>
+    ${g.luftvagDetalj ? `<p style="font-size:12px;color:var(--text-3)">${g.luftvagDetalj}</p>` : ''}
+  `);
+
+  // Risker
+  html += card('RISKER', '⚠️', `
+    <div class="risks-grid">
+      <div>
+        <div class="risk-col-label">KIRURGISKA</div>
+        ${g.kirurgiskaRisker.map(r => `<div class="risk-item"><span class="risk-dot" style="background:#E65100"></span>${r}</div>`).join('')}
+      </div>
+      <div>
+        <div class="risk-col-label">ANESTESIOLOGISKA</div>
+        ${g.anestesiologiskaRisker.map(r => `<div class="risk-item"><span class="risk-dot" style="background:var(--red)"></span>${r}</div>`).join('')}
+      </div>
+    </div>
+  `);
+
+  // Monitorering
+  html += card('MONITORERING', '📡', `<div class="tag-cloud">${g.monitorering.map(m => `<span class="tag">${m}</span>`).join('')}</div>`);
+
+  // Infarter
+  html += card('INFARTER', '💉', g.infarter.map(inf => `
+    <div class="infart-row">
+      <div class="infart-icon" style="background:var(--navy-pale)">💉</div>
+      <div class="infart-content">
+        <div class="infart-name">
+          ${inf.typ}
+          ${inf.storlek ? `<span class="badge" style="background:var(--surface);color:var(--text-2)">${inf.storlek}</span>` : ''}
+          ${inf.antal > 1 ? `<span class="badge" style="background:var(--navy-pale);color:var(--navy)">×${inf.antal}</span>` : ''}
+          ${inf.obligatorisk ? `<span class="obligatorisk-mark">OBLIGAT</span>` : ''}
+        </div>
+        <div class="infart-detail">
+          ${inf.placering || ''}
+          ${inf.kommentar ? `<span style="font-style:italic"> – ${inf.kommentar}</span>` : ''}
+        </div>
+      </div>
+    </div>`).join(''));
+
+  // Specialutrustning
+  if (g.specialutrustning?.length) {
+    html += card('SPECIALUTRUSTNING', '🔧', `<div class="tag-cloud">${g.specialutrustning.map(u => `<span class="tag tag-green">${u}</span>`).join('')}</div>`);
+  }
+
+  // Källdokument
+  if (g.kallaDokument?.length) {
+    html += card('KÄLLDOKUMENT (PMI SOLNA)', '📄', g.kallaDokument.map(k => `
+      <div class="kalla-row"><span class="kalla-pmi">${k}</span></div>`).join(''));
+  }
+
+  document.getElementById('tab-oversikt').innerHTML = html;
+}
+
+// ─── Läkemedel ───
+function renderLakemedelDetail(g) {
+  let html = '';
+  html += `<div class="card" style="overflow:hidden;margin-bottom:12px">
+    <div class="card-header">💊 LÄKEMEDEL PERIOPERATIVT (${g.lakemedel.length})</div>
+    <div class="card-body" style="padding:0">
+      ${g.lakemedel.map(lm => {
+        const tc = timingColor(lm.timing);
+        return `<div class="lm-row" style="padding:12px 14px">
+          <div class="lm-header">
+            <div class="lm-name">${lm.namn}</div>
+            <span class="timing-badge" style="background:${tc.bg};color:${tc.txt}">${lm.timing}</span>
+          </div>
+          <div class="lm-dos">${lm.dos}</div>
+          ${lm.kommentar ? `<div class="lm-kommentar">${lm.kommentar}</div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+  document.getElementById('tab-lakemedel-detail').innerHTML = html;
+}
+
+// ─── Checklista ───
+const FASER = ['preop','induktion','intraop','avslut','postop'];
+const FAS_NAMN = { preop:'Preoperativt', induktion:'Induktion', intraop:'Intraoperativt', avslut:'Avslut/Väckning', postop:'Postoperativt' };
+
+function getCheckState(guideId, checkId) {
+  return !!(state.checkState[guideId]?.[checkId]);
+}
+function toggleCheck(guideId, checkId) {
+  if (!state.checkState[guideId]) state.checkState[guideId] = {};
+  state.checkState[guideId][checkId] = !getCheckState(guideId, checkId);
+  renderChecklista(state.valdGuide);
+  renderGuideList();
+}
+function resetChecklist(guideId) {
+  if (confirm('Återställ hela checklistan?')) {
+    state.checkState[guideId] = {};
+    renderChecklista(state.valdGuide);
+    renderGuideList();
+  }
+}
+function getProgress(g) {
+  if (!g.checklistor?.length) return 0;
+  const klara = g.checklistor.filter(c => getCheckState(g.id, c.text)).length;
+  return klara / g.checklistor.length;
+}
+
+function renderChecklista(g) {
+  const total = g.checklistor.length;
+  const klara = g.checklistor.filter(c => getCheckState(g.id, c.text)).length;
+  const pct = total ? Math.round(klara/total*100) : 0;
+
+  let html = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button class="reset-btn" onclick="resetChecklist('${g.id}')">↺ Återställ</button>
+      <div class="checklist-progress" style="flex:1;margin-bottom:0">
+        <div class="checklist-progress-bar">
+          <div class="checklist-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="checklist-progress-text">${pct}%</div>
+      </div>
+    </div>
+    <div class="checklist-phases">`;
+
+  FASER.forEach(fas => {
+    const items = g.checklistor.filter(c => c.fas === fas);
+    if (!items.length) return;
+    const fasKlara = items.filter(c => getCheckState(g.id, c.text)).length;
+    const allDone = fasKlara === items.length;
+    const isActive = state.valdCheckFas === fas;
+    html += `<button class="phase-btn ${isActive ? 'active' : ''} ${allDone ? 'done' : ''}"
+      onclick="setCheckFas('${fas}')">
+      ${allDone ? '✓ ' : ''}${FAS_NAMN[fas]}
+      <span class="phase-count">${fasKlara}/${items.length}</span>
+    </button>`;
+  });
+
+  html += '</div>';
+
+  const aktuellaItems = g.checklistor.filter(c => c.fas === state.valdCheckFas);
+  aktuellaItems.forEach(item => {
+    const klar = getCheckState(g.id, item.text);
+    html += `<div class="check-item ${item.kritisk ? 'kritisk' : ''} ${klar ? 'done' : ''}"
+      onclick="toggleCheck('${g.id}', '${item.text.replace(/'/g, "\\'")}')">
+      <div class="check-circle">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="flex:1">
+        ${item.kritisk && !klar ? `<div class="check-kritisk-label">⚠ Kritisk punkt</div>` : ''}
+        <div class="check-text">${item.text}</div>
+        ${item.kommentar ? `<div class="check-comment">${item.kommentar}</div>` : ''}
+      </div>
+    </div>`;
+  });
+
+  if (!aktuellaItems.length) {
+    html += `<div style="text-align:center;padding:30px;color:var(--text-3);font-size:13px">Inga punkter för denna fas</div>`;
+  }
+
+  document.getElementById('tab-checklista').innerHTML = html;
+}
+
+function setCheckFas(fas) {
+  state.valdCheckFas = fas;
+  renderChecklista(state.valdGuide);
+}
+
+// ─── Postop ───
+function renderPostop(g) {
+  let html = card('POSTOPERATIVA ORDINATIONER', '📋', g.postopOrdinationer.map(p => `
+    <div class="postop-item"><span class="postop-bullet"></span><span>${p}</span></div>`).join(''));
+
+  if (g.caveat?.length) {
+    html += `<div class="caveat-box">
+      <div class="caveat-title">⚠️ VIKTIGA VARNINGAR</div>
+      ${g.caveat.map(c => `<div class="caveat-item"><span>▸</span><span>${c}</span></div>`).join('')}
+    </div>`;
+  }
+
+  html += card('KÄLLDOKUMENT', '📄', g.kallaDokument.map(k => `
+    <div class="kalla-row"><span class="kalla-pmi">${k}</span></div>`).join(''));
+
+  document.getElementById('tab-postop').innerHTML = html;
+}
+
+// ─── Helper ───
+function card(titel, ikon, bodyHtml) {
+  return `<div class="card">
+    <div class="card-header">${ikon} ${titel}</div>
+    <div class="card-body">${bodyHtml}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LÄKEMEDEL PANEL
+// ═══════════════════════════════════════════════════════════
+
+const LAKEMEDEL_DB = [
+  {namn:'Propofol',generika:'Propofol',styrka:'10 mg/ml',dos:'Induktion: 1,5–2,5 mg/kg iv\nUnderhåll: 4–12 mg/kg/h\nTCI: 2,5–6 µg/ml\nSedering: 0,5–1 mg/kg/h',indikation:'Induktion och underhåll av anestesi och sedering',etikett:'#FDD835',grupp:'Hypnotika'},
+  {namn:'Tiopental (Pentocur)',generika:'Pentocur',styrka:'25 mg/ml (spädd)',dos:'3–5 mg/kg iv',maxDos:'40 ml = 1 g',spädning:'500 mg + 20 ml NaCl → 25 mg/ml',indikation:'Anestesiinduktion',kontra:'Barbiturat-allergi, status astmaticus, porfyri',etikett:'#FDD835',grupp:'Hypnotika'},
+  {namn:'Ketamin (Ketalar)',generika:'Ketalar',styrka:'10 mg/ml',dos:'Induktion: 2,0 (1,0–4,5) mg/kg iv\nUnderhåll: 2–6 mg/kg/h\nPostop smärta: 0,05–0,1 mg/kg/h',indikation:'Induktion, underhåll, sedering, smärta',kontra:'Förhöjt ICP, ischemisk hjärtsjd, eklampsi',etikett:'#FDD835',grupp:'Hypnotika'},
+  {namn:'Esketamin (Ketanest)',generika:'Ketanest',styrka:'5 mg/ml',dos:'Induktion: 0,5–1 mg/kg\nUnderhåll: 0,5–3 mg/kg/h',indikation:'Induktion, underhåll, smärtlindring',kontra:'Förhöjt ICP, ischemisk hjärtsjd, eklampsi',etikett:'#FDD835',grupp:'Hypnotika'},
+  {namn:'Midazolam',generika:'Midazolam',styrka:'1 mg/ml',dos:'1–3 mg iv',maxDos:'3 mg',indikation:'Sedering, premedicinering',etikett:'#FB8C00',grupp:'Bensodiazepin'},
+  {namn:'Diazepam (Stesolid)',generika:'Stesolid Novum',styrka:'5 mg/ml',dos:'Sedering: 0,5–2 ml\nKramper: 2–5 mg iv',maxDos:'5 mg',indikation:'Sedering, generella kramper',etikett:'#FB8C00',grupp:'Bensodiazepin'},
+  {namn:'Rokuronium (Esmeron)',generika:'Esmeron',styrka:'10 mg/ml',dos:'Intubation: 0,6–1 mg/kg\nUnderhåll: 0,15 mg/kg',indikation:'Endotrakeal intubation och muskelrelaxation',etikett:'#E53935',grupp:'Muskelrelax'},
+  {namn:'Suxameton (Celocurin)',generika:'Celocurin',styrka:'50 mg/ml',dos:'Intubation: 1 mg/kg\nLaryngospasm: 0,5–1 mg/kg',indikation:'Endotrakeal intubation (RSI), laryngospasm',kontra:'Malign hypertermi, hyperkalemi, brännskador',etikett:'#E53935',grupp:'Muskelrelax'},
+  {namn:'Mivakurium (Mivacron)',generika:'Mivacron',styrka:'2 mg/ml',dos:'Intubation: 0,15–0,25 mg/kg\nUnderhåll: 0,1 mg/kg',indikation:'Endotrakeal intubation och muskelrelaxation',etikett:'#E53935',grupp:'Muskelrelax'},
+  {namn:'Glyko/neostigmin (Robinul/Neostigmin)',generika:'Robinul/Neostigmin',styrka:'0,5+2,5 mg/ml',dos:'0,5 mg + 2,5 mg iv (1–2 ampuller)',maxDos:'Neostigmin max 50 µg/kg',indikation:'Reversering av neuromuskulär blockad',kontra:'TOF <2 staplar. Mekaniskt hinder tarm/urin',etikett:'#EF9A9A',grupp:'Muskelrelax'},
+  {namn:'Remifentanil (Ultiva)',generika:'Ultiva',styrka:'50 µg/ml (spädd)',dos:'0,1–0,6 µg/kg/min\nTCI: Cpt 4–10 ng/ml',spädning:'1 mg + 20 ml NaCl = 50 µg/ml',indikation:'Peroperativ smärta',kontra:'Andningsdepression',etikett:'#1E88E5',grupp:'Opioid'},
+  {namn:'Fentanyl (Leptanal)',generika:'Leptanal',styrka:'50 µg/ml',dos:'50–250 µg iv (1–5 ml)',indikation:'Peroperativ smärta',kontra:'Andningsdepression',etikett:'#1E88E5',grupp:'Opioid'},
+  {namn:'Alfentanil (Rapifen)',generika:'Rapifen',styrka:'0,5 mg/ml',dos:'0,25–1 mg iv',indikation:'Peroperativ smärta',kontra:'Andningsdepression',etikett:'#1E88E5',grupp:'Opioid'},
+  {namn:'Morfin',generika:'Morfin',styrka:'1 mg/ml (spädd)',dos:'0,1–0,15 mg/kg iv (max 10 mg)',spädning:'1 ml (10 mg/ml) + 9 ml NaCl → 1 mg/ml',indikation:'Svår smärta, postoperativ analgesi',kontra:'Andningsdepression',etikett:'#1E88E5',grupp:'Opioid'},
+  {namn:'Ondansetron',generika:'Ondansetron',styrka:'2 mg/ml',dos:'4–8 mg iv',maxDos:'8 mg',indikation:'Profylax/behandling PONV',etikett:'#F48FB1',grupp:'Antiemetika'},
+  {namn:'Droperidol (Dridol)',generika:'Dridol',styrka:'2,5 mg/ml',dos:'0,5–0,75 mg iv',maxDos:'1 mg = 0,4 ml',indikation:'Illamående/PONV',kontra:'Förlängt QT, hypokalemi, feokromocytom',etikett:'#F48FB1',grupp:'Antiemetika'},
+  {namn:'Betametason (Betapred)',generika:'Betapred',styrka:'4 mg/ml',dos:'4–8 mg iv – INNAN kirurgiskt trauma',maxDos:'4 mg (PONV-dos)',indikation:'PONV-profylax',kontra:'Diabetes, täta op-intervall',etikett:'#ECEFF1',grupp:'Antiemetika'},
+  {namn:'Efedrin',generika:'Efedrin',styrka:'5 mg/ml',dos:'5–10 mg iv',maxDos:'50 mg',indikation:'Blodtrycksfall vid anestesi',kontra:'Ischemisk hjärtsjd. CAVE feokromocytom',etikett:'#8E24AA',grupp:'Kardiovaskulärt'},
+  {namn:'Fenylefrin',generika:'Fenylefrin',styrka:'0,1 mg/ml (färdigspädd)',dos:'50–100 µg iv (0,5–1 ml) titreras',maxDos:'1 mg',indikation:'Blodtrycksfall vid anestesi/analgesi',kontra:'Svår hypertension',etikett:'#8E24AA',grupp:'Kardiovaskulärt'},
+  {namn:'Noradrenalin',generika:'Noradrenalin',styrka:'40 µg/ml (spädd)',dos:'0,01–0,2 µg/kg/min',spädning:'2 mg (2 ml) + 48 ml NaCl = 40 µg/ml',indikation:'Vasopressor vid hypotension',etikett:'#8E24AA',grupp:'Kardiovaskulärt'},
+  {namn:'Adrenalin',generika:'Adrenalin',styrka:'0,1 mg/ml (färdigspädd)',dos:'Anafylaxi: 0,01–0,1 mg iv\nHjärtstillestånd: 1 mg iv',indikation:'Svår anafylaxi, hjärtstillestånd',etikett:'#ECEFF1',grupp:'Kardiovaskulärt'},
+  {namn:'Atropin',generika:'Atropin',styrka:'0,5 mg/ml',dos:'0,5 mg iv',maxDos:'0,5 mg',indikation:'Bradykardi med cirkulatorisk påverkan',etikett:'#43A047',grupp:'Kardiovaskulärt'},
+  {namn:'Adenosin (Feo)',generika:'Adenosin',styrka:'5 mg/ml (outspädd)',dos:'50–500 µg/kg/min iv – Hörnsten vid feo',indikation:'Hypertensiv kris vid feokromocytom',kontra:'AV-block. EJ blanda med andra LM',etikett:'#ECEFF1',grupp:'Kardiovaskulärt'},
+  {namn:'Tranexamsyra (Cyklokapron)',generika:'Cyklokapron',styrka:'100 mg/ml',dos:'2 g iv (trauma/blödning)',indikation:'Massiv blödning – antifibrinolytika',etikett:'#ECEFF1',grupp:'Koagulation'},
+  {namn:'Fibrinogenkoncentrat (Riastap)',generika:'Riastap/Fibryga',styrka:'1 g/50 ml (spädd)',dos:'2–4 g iv under 15 min (max 5 ml/min)',spädning:'50 ml sterilt vatten per flaska. Rulla, skaka ej',indikation:'Fibrinogenbrist – mål >2–2,5 g/l',etikett:'#ECEFF1',grupp:'Koagulation'},
+  {namn:'Calcium-Sandoz',generika:'Calciumgluobionat',styrka:'10 ml iv',dos:'10 ml iv – upprepa tills Ca²⁺ >1 mmol/l',indikation:'Hypokalcemi vid massiv transfusion',etikett:'#ECEFF1',grupp:'Koagulation'},
+  {namn:'Bupivakain tung (Marcain spinal)',generika:'Marcain spinal tung',styrka:'5 mg/ml',dos:'Spinal: 2–17 mg\nSittspinal: 4–5 mg\nLångvarig brachy: 15–17 mg',indikation:'Spinalanestesi',etikett:'#ECEFF1',grupp:'Lokalanestesi'},
+  {namn:'Ropivakain (Narop)',generika:'Narop',styrka:'2–7,5 mg/ml',dos:'EDA: Individuellt\nTAP-blockad: 40 ml av 3,75 mg/ml',spädning:'TAP: Ropivakain 7,5 mg/ml, 20 ml + 20 ml NaCl',indikation:'Epiduralanestesi, TAP-blockad',etikett:'#ECEFF1',grupp:'Lokalanestesi'},
+];
+
+const DRUG_GROUPS = ['alla', ...new Set(LAKEMEDEL_DB.map(l => l.grupp))];
+
+function renderLakemedelPanel() {
+  // Sidebar filter
+  let filterHtml = `<button class="drug-filter-btn active" onclick="setDrugFilter('alla', this)">Alla</button>`;
+  [...new Set(LAKEMEDEL_DB.map(l => l.grupp))].forEach(g => {
+    filterHtml += `<button class="drug-filter-btn" onclick="setDrugFilter('${g}', this)">${g}</button>`;
+  });
+  document.getElementById('lm-filter-list').innerHTML = filterHtml;
+
+  renderLakemedelContent();
+}
+
+function setDrugFilter(f, btn) {
+  state.drugFilter = f;
+  document.querySelectorAll('#lm-filter-list .drug-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLakemedelContent();
+}
+
+function renderLakemedelContent() {
+  const filtered = state.drugFilter === 'alla'
+    ? LAKEMEDEL_DB
+    : LAKEMEDEL_DB.filter(l => l.grupp === state.drugFilter);
+
+  let html = `<h2 style="font-size:16px;font-weight:700;margin-bottom:14px">Läkemedelsreferens</h2>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:16px">PMI00403-2 & PMI00409-7 | Karolinska Solna</div>`;
+
+  // Group by grupp
+  const groups = {};
+  filtered.forEach(l => {
+    if (!groups[l.grupp]) groups[l.grupp] = [];
+    groups[l.grupp].push(l);
+  });
+
+  Object.entries(groups).forEach(([grupp, lm]) => {
+    html += `<h3 style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--text-3);margin:16px 0 8px">${grupp.toUpperCase()}</h3>`;
+    lm.forEach((l, i) => {
+      const expId = grupp + i;
+      const exp = state.drugExpanded[expId];
+      html += `<div class="drug-card ${exp ? 'expanded' : ''}">
+        <div class="drug-card-header" onclick="toggleDrug('${expId}')">
+          <span class="etikett-dot" style="background:${l.etikett};border:1px solid rgba(0,0,0,.15)"></span>
+          <span class="drug-card-name">${l.namn}</span>
+          <span class="drug-card-styrka">${l.styrka}</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:4px;opacity:.4;transition:.2s;${exp?'transform:rotate(180deg)':''}">
+            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drug-card-body">
+          ${drugRow('DOS', l.dos.replace(/\n/g,'<br>'))}
+          ${l.maxDos ? drugRow('MAXDOS', l.maxDos) : ''}
+          ${l.spädning ? drugRow('SPÄDNING', l.spädning) : ''}
+          ${drugRow('INDIKATION', l.indikation)}
+          ${l.kontra ? drugRow('CAVE', `<span class="drug-detail-cave">${l.kontra}</span>`) : ''}
+        </div>
+      </div>`;
+    });
+  });
+
+  // Spädningsschema
+  html += `<h2 style="font-size:16px;font-weight:700;margin:28px 0 14px">Spädningsschema – Infusioner</h2>`;
+  const infusioner = [
+    {namn:'Noradrenalin',spädning:'2 mg (2 ml) + 48 ml NaCl 9 mg/ml',styrka:'40 µg/ml',dos:'0,01–0,2 µg/kg/min'},
+    {namn:'Noradrenalin SVAG',spädning:'2 mg (2 ml) + 248 ml NaCl 9 mg/ml',styrka:'8 µg/ml',dos:'0,01–0,1 µg/kg/min'},
+    {namn:'Adrenalin',spädning:'2 mg (2 ml) + 48 ml NaCl 9 mg/ml',styrka:'40 µg/ml',dos:'0,025–0,4 µg/kg/min'},
+    {namn:'Remifentanil (Ultiva)',spädning:'1 mg + 20 ml / 2 mg + 40 ml / 5 mg + 100 ml NaCl',styrka:'50 µg/ml',dos:'0,1–0,6 µg/kg/min'},
+    {namn:'Adenosin (Feo)',spädning:'Outspädd 5 mg/ml i 50 ml-spruta',styrka:'5 mg/ml',dos:'50–500 µg/kg/min'},
+    {namn:'Dexmedetomidin (Dexdor)',spädning:'200 µg (2 ml) + 48 ml NaCl',styrka:'4 µg/ml',dos:'0,2–1,0 µg/kg/h'},
+    {namn:'Dobutamin',spädning:'100 mg (8 ml) + 42 ml NaCl',styrka:'2000 µg/ml',dos:'2–15 µg/kg/min'},
+    {namn:'Nitroglycerin',spädning:'Färdigspädd 1 mg/ml',styrka:'1 mg/ml',dos:'0,25–1,5 µg/kg/min'},
+    {namn:'Nitroprussid (Nipride)',spädning:'60 mg + 60 ml Glukos 5% – LJUSKÄNSLIGT',styrka:'1 mg/ml',dos:'0,5–3 µg/kg/min'},
+    {namn:'Oktreotid (Sandostatin)',spädning:'500 µg i 500 ml NaCl 9 mg/ml',styrka:'1 µg/ml',dos:'50–100 µg/h (bolus 50–200 µg/15 min)'},
+  ];
+
+  infusioner.forEach(inf => {
+    html += `<div class="card" style="margin-bottom:8px;overflow:hidden">
+      <div class="card-body" style="padding:10px 14px">
+        <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:6px">${inf.namn}</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px">
+          <span style="font-weight:700;color:var(--text-3);font-size:10px;letter-spacing:.6px;padding-top:2px">SPÄDNING</span>
+          <span>${inf.spädning}</span>
+          <span style="font-weight:700;color:var(--text-3);font-size:10px;letter-spacing:.6px;padding-top:2px">STYRKA</span>
+          <span style="font-weight:600">${inf.styrka} → ${inf.dos}</span>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // Blödningsmålvärden
+  html += `<h2 style="font-size:16px;font-weight:700;margin:28px 0 14px">Målvärden – Massiv Blödning</h2>
+    <table class="blodning-table">
+      <thead><tr><th>Parameter</th><th>Målvärde</th></tr></thead>
+      <tbody>
+        ${[
+          ['Hb','>100 g/l'],
+          ['TPK (Trombocyter)','>100 × 10⁹/l'],
+          ['Fibrinogen','>2–2,5 g/l'],
+          ['PK (INR)','<1,5'],
+          ['APTT','Normalisering'],
+          ['pH','>7,2'],
+          ['Fritt Ca²⁺','>1 mmol/l'],
+        ].map(([p,v]) => `<tr><td>${p}</td><td><span class="malvarde-badge">${v}</span></td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:12px;background:var(--navy-pale);border-radius:var(--r-md);font-size:12px;color:var(--navy)">
+      <strong>Komponentterapi-ratio: 4 Erytrocyter : 4 Plasma : 1 Trombocyter</strong><br>
+      Tranexamsyra 2 g iv tidigt (bäst effekt inom 3 h). Calcium obligat vid massiv transfusion.
+    </div>`;
+
+  document.getElementById('lm-content').innerHTML = html;
+}
+
+function toggleDrug(id) {
+  state.drugExpanded[id] = !state.drugExpanded[id];
+  renderLakemedelContent();
+}
+
+function drugRow(key, val) {
+  return `<div class="drug-detail-row">
+    <span class="drug-detail-key">${key}</span>
+    <span>${val}</span>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  OM-PANEL
+// ═══════════════════════════════════════════════════════════
+
+function renderOmPanel() {
+  document.getElementById('om-content').innerHTML = `
+    <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">PMI Anestesiguider</h2>
+    <p style="color:var(--text-3);font-size:13px;margin-bottom:20px">Karolinska Universitetssjukhuset, ME Perioperativ Medicin, Solna</p>
+
+    <div style="background:var(--orange-pale);border:1px solid rgba(230,81,0,.2);border-radius:var(--r-md);padding:14px;margin-bottom:20px;font-size:13px">
+      ⚠️ Intern klinisk referensapp. Ersätter inte officiella PM eller kliniskt omdöme. Kontrollera alltid mot aktuell version i PMI-dokumentationssystemet.
+    </div>
+
+    ${card('INKLUDERADE GUIDER (15 ST)', '📋', `
+      ${GUIDER.map(g => {
+        const kat = KATEGORIER[g.kategori];
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="font-size:14px">${kat.ikon}</span>
+          <span style="flex:1">${g.namn}</span>
+          <span class="risk-badge" style="background:${RISK[g.risk].bg};color:${RISK[g.risk].farg}">${RISK[g.risk].text}</span>
+        </div>`;
+      }).join('')}`)}
+
+    ${card('KÄLLDOKUMENT (PMI SOLNA)', '📄', [
+      ['PMI00418-7','Anestesiriktlinjer vid bukoperationer'],
+      ['PMI00422-1','ERAS – Kolorektal- och gynekologisk tumörkirurgi'],
+      ['PMI00403-2','Läkemedelsreferens – perioperativa läkemedel'],
+      ['PMI00409-7','Spädningsschema infusionsläkemedel'],
+      ['PMI00446-1','Riktlinjer anestesi brachyverksamheten'],
+      ['PMI00534-1','Anestesi komplicerad endovaskulär aortakirurgi'],
+      ['PMI00535-1','Massiv okontrollerad blödning'],
+      ['PMI00538-1','Spinalanalgesi vid vaginal förlossning'],
+      ['PMI00704-4','Smärtlindring vid RALP och RALH'],
+      ['PMI00806-4','Riktlinjer anestesi feokromocytom/paragangliom'],
+      ['PMI01450-3','Smärtlindring vid robotassisterad hysterektomi'],
+      ['PMI01868-4','TCI-riktlinjer och Eleveld-modellen'],
+      ['PMI02187-1','Spinalanestesi suturering bristning förlossningssal'],
+      ['PMI00384-1','Rutin helblod traumaoperationer'],
+      ['Kar2-14745','Feokromocytom – perioperativ handläggning'],
+    ].map(([pmi, titel]) => `<div class="kalla-row"><span class="kalla-pmi">${pmi}</span><span>${titel}</span></div>`).join(''))}
+  `;
+}
+</script>
+</body>
+</html>
